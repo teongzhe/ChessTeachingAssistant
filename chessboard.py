@@ -33,6 +33,7 @@ class ChessBoard:
 		self.state["chessboard_y_array"] = 8
 		self.CELL_SIZE = self.BOARD_SIZE / self.state["chessboard_x_array"]
 		self.TEXT_MARGIN = 20
+		self.state['chess_piece_size'] = int(0.8 * self.CELL_SIZE)
 
 		# Draw black and white squares
 		for i in range(self.state["chessboard_x_array"]):
@@ -59,6 +60,8 @@ class ChessBoard:
 		self.CELL_SIZE = self.BOARD_SIZE / self.state["chessboard_y_array"]
 		self.TEXT_MARGIN = 50
 		self.LINEWIDTH = 2
+		self.state['chess_piece_size'] = int(0.8 * self.CELL_SIZE)
+
 
 		# Draw horizontal lines
 		for i in range(self.state["chessboard_y_array"]):
@@ -79,8 +82,6 @@ class ChessBoard:
 		# Draw top 'X'
 		self.chess_board_objects.append(self.canvas.create_line(self.BOARD_MARGIN + 0.5*self.BOARD_SIZE - self.CELL_SIZE, self.BOARD_MARGIN + self.BOARD_SIZE - 0.5*self.CELL_SIZE, self.BOARD_MARGIN + 0.5*self.BOARD_SIZE + self.CELL_SIZE, self.BOARD_MARGIN + self.BOARD_SIZE - 2.5*self.CELL_SIZE, width=self.LINEWIDTH))
 		self.chess_board_objects.append(self.canvas.create_line(self.BOARD_MARGIN + 0.5*self.BOARD_SIZE - self.CELL_SIZE, self.BOARD_MARGIN + self.BOARD_SIZE - 2.5*self.CELL_SIZE, self.BOARD_MARGIN + 0.5*self.BOARD_SIZE + self.CELL_SIZE, self.BOARD_MARGIN + self.BOARD_SIZE - 0.5*self.CELL_SIZE, width=self.LINEWIDTH))
-
-		
 
 		# Flip y coordinates
 		self.canvas.scale("all", 0, 0.5*self.state["canvas_size"], 1, -1)

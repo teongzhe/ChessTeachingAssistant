@@ -1,9 +1,10 @@
 import tkinter
 
 class ActionPanel:
-	def __init__(self, frame, state, chessboard):
+	def __init__(self, frame, state, chesspieces, chessboard):
 		self.frame = frame
 		self.state = state
+		self.chesspieces = chesspieces
 		self.chessboard = chessboard
 
 		self.chess_type_panel()
@@ -17,7 +18,9 @@ class ActionPanel:
 		var = tkinter.StringVar(value='CHESS')
 		def callback():
 			self.state["chess_type"] = var.get()
+			self.chesspieces.initialize_menu()
 			self.chessboard.initialize_chess_board()
+			
 
 		R1 = tkinter.Radiobutton(self.frame, command=callback, variable=var, value="CHESS", text="Chess")
 		R1.pack(anchor='w')
