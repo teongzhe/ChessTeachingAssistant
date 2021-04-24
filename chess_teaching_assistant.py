@@ -1,5 +1,4 @@
 import tkinter
-
 import action_panel, chessboard, chesspieces
 
 class MainWindow:
@@ -19,7 +18,7 @@ class MainWindow:
 		###					Organize panels						###
 		###########################################################
 		self.center = chessboard.ChessBoard(tkinter.Canvas(root, bg="white", width=self.state["canvas_size"], height=self.state["canvas_size"]), self.state)
-		self.left_panel = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.state)
+		self.left_panel = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.state, self.center)
 		self.right_panel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.state, self.left_panel, self.center)
 
 		self.left_panel.frame.pack(side=tkinter.LEFT)

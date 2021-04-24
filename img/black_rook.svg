@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -8,13 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="75.265244"
+   height="613.70111"
    id="svg1"
-   inkscape:version="0.46"
-   sodipodi:docbase="/home/vector"
-   sodipodi:docname="chess_set_symbols_09_black_rook.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="black_rook.svg"
    sodipodi:version="0.32"
-   width="64.679039"
+   width="532.83533"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.0"
    inkscape:export-filename="C:\joanna\Gfx\drawings_vector\admin\thumbs\Igor Krizanovskij\chess_set_symbols_igor_k_01_ok.png"
@@ -88,25 +88,46 @@
      borderopacity="1.0"
      id="base"
      inkscape:current-layer="layer1"
-     inkscape:cx="702.38575"
-     inkscape:cy="44.73312"
+     inkscape:cx="237.67821"
+     inkscape:cy="285.05214"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:window-height="778"
-     inkscape:window-width="1270"
-     inkscape:window-x="2"
-     inkscape:window-y="0"
+     inkscape:window-height="1001"
+     inkscape:window-width="1920"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
      inkscape:zoom="0.80058132"
      pagecolor="#ffffff"
-     showgrid="false" />
+     showgrid="false"
+     inkscape:pagecheckerboard="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1" />
   <g
      id="layer1"
      inkscape:groupmode="layer"
      inkscape:label="Layer 1"
-     transform="translate(-412.41786,-81.055363)">
+     transform="translate(-211.29947,88.681727)">
     <path
-       d="M 414.87076,156.32061 L 412.41786,153.86771 L 412.41786,144.70162 L 425.45694,131.79163 L 425.45694,106.10076 L 415.38717,96.160063 L 415.38717,84.670163 L 419.00196,81.055363 L 428.16805,81.055363 L 430.49184,83.250083 L 430.49184,86.477573 L 435.39763,86.477573 L 435.39763,83.250083 L 437.59233,81.055363 L 451.92242,81.055363 L 454.11713,83.250083 L 454.11713,86.477573 L 459.02293,86.477573 L 459.02293,83.250083 L 461.21762,81.055363 L 470.51281,81.055363 L 474.12761,84.670163 L 474.12761,96.160063 L 464.05783,106.10076 L 464.05783,131.79163 L 477.0969,144.70162 L 477.0969,153.86771 L 474.51491,156.32061 L 414.87076,156.32061 M 430.10454,128.82234 L 430.10454,133.21174 L 459.41023,133.21174 L 459.41023,128.82234 L 430.10454,128.82234 M 430.10454,105.58435 L 430.10454,109.97375 L 459.41023,109.97375 L 459.41023,105.58435 L 430.10454,105.58435"
+       d="m 249.98985,504.81737 -18.69038,-18.69038 v -69.84291 l 99.35397,-98.37034 V 122.15686 l -76.7287,-75.745187 v -87.549678 l 27.54364,-27.543722 h 69.84291 l 17.7066,16.723122 v 24.592527 h 37.38069 v -24.592527 l 16.72297,-16.723122 h 109.19107 l 16.72305,16.723122 v 24.592527 h 37.38076 v -24.592527 l 16.7229,-16.723122 h 70.82661 l 27.54372,27.543722 v 87.549678 l -76.72877,75.745187 v 195.75688 l 99.35389,98.37034 v 69.84291 l -19.67402,18.69038 H 249.98985 M 366.06679,295.28863 v 33.44594 H 589.36753 V 295.28863 H 366.06679 m 0,-177.06666 v 33.44595 H 589.36753 V 118.22197 H 366.06679"
        id="path1734"
-       style="font-size:12px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" />
+       style="font-style:normal;font-weight:normal;font-size:12px;font-family:'Bitstream Vera Sans';fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:40;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="51.457458"
+       inkscape:export-ydpi="51.457458" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:49.96369553;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       d="M -45.630456,53.488478 V 37.250277 H 65.538763 176.70798 v 16.238201 16.2382 H 65.538763 -45.630456 Z"
+       id="path814"
+       inkscape:connector-curvature="0"
+       transform="translate(412.41786,81.055363)" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:49.96369553;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       d="m -45.630456,230.85959 v -16.2382 H 65.538763 176.70798 v 16.2382 16.2382 H 65.538763 -45.630456 Z"
+       id="path816"
+       inkscape:connector-curvature="0"
+       transform="translate(412.41786,81.055363)" />
   </g>
 </svg>

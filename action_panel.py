@@ -1,4 +1,5 @@
 import tkinter
+import chesspieces, chessboard
 
 class ActionPanel:
 	def __init__(self, frame, state, chesspieces, chessboard):
@@ -18,8 +19,9 @@ class ActionPanel:
 		var = tkinter.StringVar(value='CHESS')
 		def callback():
 			self.state["chess_type"] = var.get()
-			self.chesspieces.initialize_menu()
+			self.chessboard.clear_pieces_from_board()
 			self.chessboard.initialize_chess_board()
+			self.chesspieces.initialize_menu()
 			
 
 		R1 = tkinter.Radiobutton(self.frame, command=callback, variable=var, value="CHESS", text="Chess")
