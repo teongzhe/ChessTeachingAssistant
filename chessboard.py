@@ -1,5 +1,6 @@
 import tkinter
 from PIL import Image, ImageTk
+import moves
 
 class ChessBoard:
 	def __init__(self, canvas, parameters, state):
@@ -29,7 +30,6 @@ class ChessBoard:
 
 
 		# Chess
-		self.parameters['CHESS'] = dict()
 		self.parameters['CHESS']['CHESSBOARD_X_ARRAY'] = 8
 		self.parameters['CHESS']['CHESSBOARD_Y_ARRAY'] = 8
 		self.parameters['CHESS']['CELL_SIZE'] = int(board_size / 8)
@@ -41,10 +41,6 @@ class ChessBoard:
 		self.parameters['CHESS']['BOARD_Y_START'] = self.parameters['BOARD_MARGIN']
 		self.parameters['CHESS']['BOARD_Y_END'] = self.parameters['BOARD_MARGIN'] + self.parameters['BOARD_SIZE']
 
-		self.parameters['CHESS']['IMG'] = dict()
-		self.parameters['CHESS']['PLAYER_COLORS'] = ('white','black')
-		self.parameters['CHESS']['TYPES_OF_CHESS_PIECES'] = ('king','queen','rook','knight','bishop','pawn')
-
 		self.parameters['CHESS']['CENTER'] = dict()
 		for i in range(self.parameters['CHESS']['CHESSBOARD_X_ARRAY']):
 			for j in range(self.parameters['CHESS']['CHESSBOARD_Y_ARRAY']):
@@ -52,7 +48,6 @@ class ChessBoard:
 
 
 		# Xiangqi
-		self.parameters['XIANGQI'] = dict()
 		self.parameters['XIANGQI']['CHESSBOARD_X_ARRAY'] = 9
 		self.parameters['XIANGQI']['CHESSBOARD_Y_ARRAY'] = 10
 		self.parameters['XIANGQI']['CELL_SIZE'] = int(board_size / 10)
@@ -63,10 +58,6 @@ class ChessBoard:
 		self.parameters['XIANGQI']['BOARD_X_END'] = self.parameters['BOARD_MARGIN'] + self.parameters['BOARD_SIZE'] - self.parameters['XIANGQI']['CELL_SIZE'] + 0.5*self.parameters['XIANGQI']['PIECE_SIZE']
 		self.parameters['XIANGQI']['BOARD_Y_START'] = self.parameters['BOARD_MARGIN'] + 0.5*self.parameters['XIANGQI']['CELL_SIZE'] - 0.5*self.parameters['XIANGQI']['PIECE_SIZE']
 		self.parameters['XIANGQI']['BOARD_Y_END'] = self.parameters['BOARD_MARGIN'] + self.parameters['BOARD_SIZE'] - 0.5*self.parameters['XIANGQI']['CELL_SIZE'] + 0.5*self.parameters['XIANGQI']['PIECE_SIZE']
-
-		self.parameters['XIANGQI']['IMG'] = dict()
-		self.parameters['XIANGQI']['PLAYER_COLORS'] = ('red','black')
-		self.parameters['XIANGQI']['TYPES_OF_CHESS_PIECES'] = ('shuai', 'shi', 'xiang', 'ju', 'ma', 'pao', 'bing')
 
 		self.parameters['XIANGQI']['CENTER'] = dict()
 		for i in range(self.parameters['XIANGQI']['CHESSBOARD_X_ARRAY']):
@@ -228,17 +219,16 @@ class ChessBoard:
 
 			# Check if game is ongoing
 			if self.state['game_is_ongoing']:
-				print('Not implemented yet')
-			# When game is not ongoing
+				self.move_piece(coordinate)
 			else:
-				self.change_pieces_on_board(coordinate)
+				self.change_piece_on_board(coordinate)
 
 
 	def set_board_xy_array_size(self, x, y):
 		self.state['chessboard_x_array'] = x
 		self.state['chessboard_y_array'] = y
 
-	def change_pieces_on_board(self, coordinate):
+	def change_piece_on_board(self, coordinate):
 		# Check if any piece exists on the selected box
 		self.remove_piece_from_board(coordinate)
 
@@ -263,6 +253,86 @@ class ChessBoard:
 			self.canvas.delete(self.chess_pieces_objects[coordinate])
 			self.chess_pieces_objects.pop(coordinate)
 		self.state['position'] = dict()
+
+	def move_piece(self, coordinate):
+		current_move = self.state['current_move']
+
+		selected_piece = ''
+		player_color, piece = '', ''
+		if coordinate in self.state['position']:
+			selected_piece = self.state['position'][coordinate]
+			player_color, piece = selected_piece.split('_')
+		
+		if current_move.moved_piece == '':
+			# Select chess piece at specified coordinate
+			if selected_piece != '':
+				if player_color != self.state['previous_player']:
+					current_move.player_color = player_color
+					current_move.moved_piece = piece
+					current_move.start_pos = coordinate
+		else:
+			# Change selection to new chess piece at specified coordinate
+			if player_color != self.state['previous_player'] and player_color != '':
+				if selected_piece != '':
+					current_move.player_color = player_color
+					current_move.moved_piece = piece
+					current_move.start_pos = coordinate
+			# Move piece
+			else:
+				current_move.end_pos = coordinate
+				if selected_piece != '':
+					current_move.piece_taken = selected_piece
+					current_move.piece_taken_pos = coordinate
+					self.remove_piece_from_board(current_move.piece_taken_pos)
+				
+				self.remove_piece_from_board(current_move.start_pos)
+				self.add_piece_to_board(current_move.end_pos, current_move.player_color + '_' + current_move.moved_piece)
+
+				# Record move
+				self.state['current_move_index'] += 1
+				if (len(self.state['move_list']) > self.state['current_move_index']):
+					self.state['move_list'] = self.state['move_list'][:self.state['current_move_index']]
+				self.state['move_list'].append(current_move)
+				self.state['current_move'] = moves.Moves()
+				self.state['previous_player'] = current_move.player_color
+
+
+
+	def take_back(self):
+		# Get information
+		index = self.state['current_move_index']
+		if index >= 0:
+			move = self.state['move_list'][index]
+
+			# Reverse move
+			self.remove_piece_from_board(move.end_pos)
+			self.add_piece_to_board(move.start_pos, move.player_color + '_' + move.moved_piece)
+			if move.piece_taken != '':
+				self.add_piece_to_board(move.end_pos, move.piece_taken)
+
+			# Update state
+			self.state['current_move_index'] -= 1
+			index = self.state['current_move_index']
+			self.state['previous_player'] = self.state['move_list'][index].player_color if index >= 0 else ''
+
+	def forward(self):
+		# Get information
+		index = self.state['current_move_index']
+		if index < len(self.state['move_list']) - 1:
+			move = self.state['move_list'][index+1]
+
+			# Execute move
+			self.remove_piece_from_board(move.start_pos)
+			if move.piece_taken != '':
+				self.remove_piece_from_board(move.end_pos)
+			self.add_piece_to_board(move.end_pos, move.player_color + '_' + move.moved_piece)
+
+			# Update state
+			self.state['current_move_index'] += 1
+			index = self.state['current_move_index']
+			self.state['previous_player'] = self.state['move_list'][index].player_color
+
+
 
 	def starting_positions(self):
 		# Chess

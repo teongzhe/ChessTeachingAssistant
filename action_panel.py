@@ -41,3 +41,7 @@ class ActionPanel:
 		# Starting positions and clear board options
 		tkinter.Button(main_frame, text='Starting positions', command=self.chessboard.starting_positions, width=BUTTON_WIDTH).pack(anchor='w')
 		tkinter.Button(main_frame, text='Clear board', command=self.chessboard.clear_pieces_from_board, width=BUTTON_WIDTH).pack(anchor='w')
+
+		# Take back and undo take back
+		tkinter.Button(main_frame, text='Take back move', command=self.chessboard.take_back, width=BUTTON_WIDTH).pack(anchor='w')
+		tkinter.Button(main_frame, text='Undo take back', command=self.chessboard.forward, width=BUTTON_WIDTH).pack(anchor='w')
