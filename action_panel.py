@@ -1,4 +1,5 @@
 import tkinter
+import copy
 import chesspieces, chessboard
 
 class ActionPanel:
@@ -14,7 +15,7 @@ class ActionPanel:
 	def chess_type_panel(self):
 		labelFrame = tkinter.Frame(self.frame)
 		labelFrame.pack(side=tkinter.TOP)
-		tkinter.Label(labelFrame, text="What would you like to play today?").pack(side=tkinter.TOP)
+		tkinter.Label(labelFrame, text='What would you like to play today?').pack(side=tkinter.TOP)
 
 		# Callback function and variable
 		var = tkinter.StringVar(value='CHESS')
@@ -24,13 +25,11 @@ class ActionPanel:
 				self.chessboard.clear_pieces_from_board()
 				self.chessboard.initialize_chess_board()
 				self.chesspieces.initialize_menu()
+
+				self.state['clear_move_list']()
 			
-
-		R1 = tkinter.Radiobutton(self.frame, command=callback, variable=var, value="CHESS", text="Chess")
-		R1.pack(anchor='w')
-
-		R2 = tkinter.Radiobutton(self.frame, command=callback, variable=var, value="XIANGQI", text="Xiang Qi")
-		R2.pack(anchor='w')
+		tkinter.Radiobutton(self.frame, command=callback, variable=var, value='CHESS', text='Chess').pack(anchor='w')
+		tkinter.Radiobutton(self.frame, command=callback, variable=var, value='XIANGQI', text='Xiang Qi').pack(anchor='w')
 
 	def chessboard_state_panel(self):
 		BUTTON_WIDTH = 20
@@ -45,3 +44,15 @@ class ActionPanel:
 		# Take back and undo take back
 		tkinter.Button(main_frame, text='Take back move', command=self.chessboard.take_back, width=BUTTON_WIDTH).pack(anchor='w')
 		tkinter.Button(main_frame, text='Undo take back', command=self.chessboard.forward, width=BUTTON_WIDTH).pack(anchor='w')
+
+		# Quick save and quick load
+		def quicksave():
+			self.state['quick_save_position'] = copy.deepcopy(self.state['position'])
+		tkinter.Button(main_frame, text='Quick save', command=quicksave, width=BUTTON_WIDTH).pack(anchor='w')
+
+		def quickload():
+			self.chessboard.clear_pieces_from_board()
+			for coordinate, piece in self.state['quick_save_position'].items():
+				self.chessboard.add_piece_to_board(coordinate, piece)
+			self.state['clear_move_list']()
+		tkinter.Button(main_frame, text='Quick load', command=quickload, width=BUTTON_WIDTH).pack(anchor='w')

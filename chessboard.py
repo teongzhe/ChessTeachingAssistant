@@ -254,6 +254,8 @@ class ChessBoard:
 			self.chess_pieces_objects.pop(coordinate)
 		self.state['position'] = dict()
 
+		self.state['clear_move_list']()
+
 	def move_piece(self, coordinate):
 		current_move = self.state['current_move']
 
@@ -286,7 +288,15 @@ class ChessBoard:
 					self.remove_piece_from_board(current_move.piece_taken_pos)
 				
 				self.remove_piece_from_board(current_move.start_pos)
-				self.add_piece_to_board(current_move.end_pos, current_move.player_color + '_' + current_move.moved_piece)
+				if current_move.moved_piece == 'pawn':
+					if current_move.player_color == 'white' and current_move.end_pos[1] == 0:
+						current_move.promoted_to = self.pawn_promotion(current_move.player_color)
+					elif current_move.player_color == 'black' and current_move.end_pos[1] == 7:
+						current_move.promoted_to = self.pawn_promotion(current_move.player_color)
+
+					self.add_piece_to_board(current_move.end_pos, current_move.promoted_to if current_move.promoted_to != '' else current_move.player_color + '_' + current_move.moved_piece)
+				else:
+					self.add_piece_to_board(current_move.end_pos, current_move.player_color + '_' + current_move.moved_piece)
 
 				# Record move
 				self.state['current_move_index'] += 1
@@ -295,6 +305,33 @@ class ChessBoard:
 				self.state['move_list'].append(current_move)
 				self.state['current_move'] = moves.Moves()
 				self.state['previous_player'] = current_move.player_color
+	
+	def pawn_promotion(self, color):
+		class promotion_prompt:
+			def __init__(self, master, parameters):
+				self.piece_to_promote_to = ''
+				self.parameters = parameters
+
+				# Create promotion window
+				self.promotion_window = tkinter.Toplevel(master)
+				self.promotion_window.title('Promotion')
+
+				def callback(chosen_piece):
+					print(chosen_piece)
+					self.piece_to_promote_to = chosen_piece
+					self.promotion_window.destroy()
+
+				for piece in self.parameters['CHESS']['TYPES_OF_CHESS_PIECES']:
+					if piece != 'pawn':
+						chess_piece = color + '_' + piece
+						img = self.parameters['CHESS']['IMG'][chess_piece]
+						img_size = self.parameters['CHESS']['PIECE_SIZE']
+						tkinter.Button(self.promotion_window, image=img, command=lambda s=chess_piece:callback(s), width=img_size, height=img_size).pack(side=tkinter.LEFT)
+				
+				master.wait_window(self.promotion_window)
+
+		promotion = promotion_prompt(self.canvas, self.parameters)
+		return promotion.piece_to_promote_to
 
 
 
@@ -335,6 +372,8 @@ class ChessBoard:
 
 
 	def starting_positions(self):
+		self.clear_pieces_from_board()
+
 		# Chess
 		if self.state['chess_type'] == 'CHESS':
 			order = ('rook','knight','bishop','queen','king','bishop','knight','rook')
@@ -363,3 +402,5 @@ class ChessBoard:
 			for i in range(0,9,2):
 				self.add_piece_to_board((i,6), 'red_bing')
 				self.add_piece_to_board((i,3), 'black_bing')
+		
+		self.state['clear_move_list']()

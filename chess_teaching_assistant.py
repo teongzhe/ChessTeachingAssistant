@@ -7,7 +7,7 @@ class MainWindow:
 		###					Default settings					###
 		###########################################################
 		self.root = root
-		root.title("Chess Teaching Assistant")
+		root.title('Chess Teaching Assistant')
 
 		self.parameters = dict()
 		self.initialize_parameters()
@@ -18,7 +18,7 @@ class MainWindow:
 		###########################################################
 		###					Organize panels						###
 		###########################################################
-		self.center = chessboard.ChessBoard(tkinter.Canvas(root, bg="white", width=self.parameters['CHESSBOARD_CANVAS_SIZE'], height=self.parameters['CHESSBOARD_CANVAS_SIZE']), self.parameters, self.state)
+		self.center = chessboard.ChessBoard(tkinter.Canvas(root, bg='white', width=self.parameters['CHESSBOARD_CANVAS_SIZE'], height=self.parameters['CHESSBOARD_CANVAS_SIZE']), self.parameters, self.state)
 		self.left_panel = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.parameters, self.state, self.center)
 		self.right_panel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.state, self.left_panel, self.center)
 
@@ -43,15 +43,19 @@ class MainWindow:
 	
 	def initialize_state(self):
 		self.state['chess_type'] = 'CHESS'
-		self.state['move_list'] = list()
-		self.state['previous_player'] = ''
-		self.state['current_move'] = moves.Moves()
-		self.state['current_move_index'] = -1
+
+		# Set initial state for move_list etc
+		def function_to_clear_move_list():
+			self.state['move_list'] = list()
+			self.state['previous_player'] = ''
+			self.state['current_move'] = moves.Moves()
+			self.state['current_move_index'] = -1
+		self.state['clear_move_list'] = function_to_clear_move_list
+		self.state['clear_move_list']()
 
 
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
 	root = tkinter.Tk()
 	MainWindow = MainWindow(root)
 	root.mainloop()

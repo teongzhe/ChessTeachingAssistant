@@ -20,10 +20,15 @@ class ChessPieces:
 		pieces = self.parameters[self.state['chess_type']]['TYPES_OF_CHESS_PIECES']
 		
 		self.state['game_is_ongoing'] = True
+		self.state['selected_piece_to_add_to_board'] = 'deselect'
 		var = tkinter.StringVar(value='deselect')
 		def callback():
-			self.state['selected_piece_to_add_to_board'] = var.get()
-			self.state['game_is_ongoing'] = True if var.get() == 'deselect' else False
+			if self.state['selected_piece_to_add_to_board'] != var.get():
+				if var.get() != 'deselect':
+					self.state['clear_move_list']()
+
+				self.state['selected_piece_to_add_to_board'] = var.get()
+				self.state['game_is_ongoing'] = True if var.get() == 'deselect' else False
 		
 		for piece in pieces:
 			temp_frame = tkinter.Frame(self.frame)
