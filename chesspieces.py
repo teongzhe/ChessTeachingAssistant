@@ -38,8 +38,15 @@ class ChessPieces:
 				self.state['img']['CHESS'][temp_str] = process_png(temp_str)
 
 		# Read img for xiangqi pieces
+		self.state['img']['XIANGQI'] = dict()
 		self.state['player_colors']['XIANGQI'] = ('red','black')
 		self.state['types_of_chess_pieces']['XIANGQI'] = ('shuai', 'shi', 'xiang', 'ju', 'ma', 'pao', 'bing')
+
+		for color in self.state['player_colors']['XIANGQI']:
+			for piece in self.state['types_of_chess_pieces']['XIANGQI']:
+				temp_str = color + '_' + piece
+				self.state['img']['XIANGQI'][temp_str] = process_png(temp_str)
+
 
 
 	def initialize_menu(self):

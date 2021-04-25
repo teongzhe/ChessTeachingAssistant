@@ -35,8 +35,7 @@ class ChessBoard:
 
 
 	def draw_chess_board(self):
-		self.state["chessboard_x_array"] = 8
-		self.state["chessboard_y_array"] = 8
+		self.set_board_xy_array_size(8,8)
 		self.CELL_SIZE = self.BOARD_SIZE / self.state["chessboard_x_array"]
 		self.TEXT_MARGIN = 10
 		self.state['chess_piece_size'] = int(0.8 * self.CELL_SIZE)
@@ -86,8 +85,7 @@ class ChessBoard:
 
 
 	def draw_xiangqi_board(self):
-		self.state["chessboard_x_array"] = 9
-		self.state["chessboard_y_array"] = 10
+		self.set_board_xy_array_size(9, 10)
 		self.CELL_SIZE = self.BOARD_SIZE / self.state["chessboard_y_array"]
 		self.TEXT_MARGIN = 0
 		self.LINEWIDTH = 2
@@ -147,6 +145,10 @@ class ChessBoard:
 
 				self.change_pieces_on_board(x, y)
 
+
+	def set_board_xy_array_size(self, x, y):
+		self.state['chessboard_x_array'] = x
+		self.state['chessboard_y_array'] = y
 
 	def change_pieces_on_board(self, x, y):
 		# Check if any piece exists on the selected box
