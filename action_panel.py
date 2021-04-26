@@ -1,11 +1,13 @@
 import tkinter
 import copy
+
+import settings
 import chesspieces, chessboard
 
 class ActionPanel:
-	def __init__(self, frame, state, chesspieces, chessboard):
+	def __init__(self, frame, chesspieces, chessboard):
 		self.frame = frame
-		self.state = state
+		self.state = settings.state
 		self.chesspieces = chesspieces
 		self.chessboard = chessboard
 

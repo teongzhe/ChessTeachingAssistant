@@ -1,11 +1,10 @@
 import tkinter
 
-class ChessPieces:
-	def __init__(self, frame, parameters, state, chessboard):
-		self.frame = frame
-		self.parameters = parameters
-		self.state = state
+import settings
 
+class ChessPieces:
+	def __init__(self, frame, chessboard):
+		self.frame = frame
 		self.initialize_menu()
 
 	def initialize_menu(self):
@@ -16,27 +15,27 @@ class ChessPieces:
 
 
 	def add_menu(self):
-		colors = self.parameters[self.state['chess_type']]['PLAYER_COLORS']
-		pieces = self.parameters[self.state['chess_type']]['TYPES_OF_CHESS_PIECES']
+		colors = settings.parameters[settings.state['chess_type']]['PLAYER_COLORS']
+		pieces = settings.parameters[settings.state['chess_type']]['TYPES_OF_CHESS_PIECES']
 		
-		self.state['game_is_ongoing'] = True
-		self.state['selected_piece_to_add_to_board'] = 'deselect'
+		settings.state['game_is_ongoing'] = True
+		settings.state['selected_piece_to_add_to_board'] = 'deselect'
 		var = tkinter.StringVar(value='deselect')
 		def callback():
-			if self.state['selected_piece_to_add_to_board'] != var.get():
+			if settings.state['selected_piece_to_add_to_board'] != var.get():
 				if var.get() != 'deselect':
-					self.state['clear_move_list']()
+					settings.state['clear_move_list']()
 
-				self.state['selected_piece_to_add_to_board'] = var.get()
-				self.state['game_is_ongoing'] = True if var.get() == 'deselect' else False
+				settings.state['selected_piece_to_add_to_board'] = var.get()
+				settings.state['game_is_ongoing'] = True if var.get() == 'deselect' else False
 		
 		for piece in pieces:
 			temp_frame = tkinter.Frame(self.frame)
 			temp_frame.pack(anchor='w')
 			for color in colors:
 				temp_str = color + '_' + piece
-				img = self.parameters[self.state['chess_type']]['IMG'][temp_str]
-				radiobtn_size = self.parameters[self.state['chess_type']]['PIECE_SIZE']
+				img = settings.parameters[settings.state['chess_type']]['IMG'][temp_str]
+				radiobtn_size = settings.parameters[settings.state['chess_type']]['PIECE_SIZE']
 
 				radiobtn = tkinter.Radiobutton(temp_frame, command=callback, variable=var, value=temp_str, image=img, indicatoron=0, width=radiobtn_size, height=radiobtn_size)
 				radiobtn.image = img
