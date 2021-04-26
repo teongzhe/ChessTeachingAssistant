@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import filedialog
 import copy
 
 import settings
@@ -7,7 +8,7 @@ import chesspieces, chessboard
 class ActionPanel:
 	def __init__(self, frame, chesspieces, chessboard):
 		self.frame = frame
-		self.state = settings.state
+		settings.state = settings.state
 		self.chesspieces = chesspieces
 		self.chessboard = chessboard
 
@@ -20,18 +21,21 @@ class ActionPanel:
 		tkinter.Label(labelFrame, text='What would you like to play today?').pack(side=tkinter.TOP)
 
 		# Callback function and variable
-		var = tkinter.StringVar(value='CHESS')
+		self.chess_type_var = tkinter.StringVar(value='CHESS')
 		def callback():
-			if self.state['chess_type'] != var.get():
-				self.state['chess_type'] = var.get()
-				self.chessboard.clear_pieces_from_board()
-				self.chessboard.initialize_chess_board()
-				self.chesspieces.initialize_menu()
-
-				self.state['clear_move_list']()
+			if settings.state['chess_type'] != self.chess_type_var.get():
+				self.change_chess_type(self.chess_type_var.get())
 			
-		tkinter.Radiobutton(self.frame, command=callback, variable=var, value='CHESS', text='Chess').pack(anchor='w')
-		tkinter.Radiobutton(self.frame, command=callback, variable=var, value='XIANGQI', text='Xiang Qi').pack(anchor='w')
+		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value='CHESS', text='Chess').pack(anchor='w')
+		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value='XIANGQI', text='Xiang Qi').pack(anchor='w')
+	
+	def change_chess_type(self, target_type):
+		settings.state['chess_type'] = target_type
+		self.chessboard.clear_pieces_from_board()
+		self.chessboard.initialize_chess_board()
+		self.chesspieces.initialize_menu()
+
+		settings.state['clear_move_list']()
 
 	def chessboard_state_panel(self):
 		BUTTON_WIDTH = 20
@@ -49,12 +53,60 @@ class ActionPanel:
 
 		# Quick save and quick load
 		def quicksave():
-			self.state['quick_save_position'] = copy.deepcopy(self.state['position'])
+			settings.state['quick_save_position'] = copy.deepcopy(settings.state['position'])
 		tkinter.Button(main_frame, text='Quick save', command=quicksave, width=BUTTON_WIDTH).pack(anchor='w')
 
 		def quickload():
 			self.chessboard.clear_pieces_from_board()
-			for coordinate, piece in self.state['quick_save_position'].items():
+			for coordinate, piece in settings.state['quick_save_position'].items():
 				self.chessboard.add_piece_to_board(coordinate, piece)
-			self.state['clear_move_list']()
+			settings.state['clear_move_list']()
 		tkinter.Button(main_frame, text='Quick load', command=quickload, width=BUTTON_WIDTH).pack(anchor='w')
+
+		# Save to file
+		def save_to_file():
+			filename = filedialog.asksaveasfilename(initialdir='.', title = 'Select a File', defaultextension = '.csv', filetypes = (('csv files','*.csv*'), ('all files', '*.*')))
+			if filename != '':
+				file = open(filename, 'w')
+				for key, value in settings.state['position'].items():
+					file.write(str(key[0]) + ',' + str(key[1]) + ',' + str(value) + '\n')
+				file.close()
+
+		tkinter.Button(main_frame, text='Save to file', command=save_to_file, width=BUTTON_WIDTH).pack(anchor='w')
+
+		# Load from file
+		def load_from_file():
+			filename = filedialog.askopenfilename(initialdir='.', filetypes = (('Comma Separated Values','*.csv*'),('all files', '*.*')))
+
+			if filename != '':			
+				data = dict()
+				file = open(filename, 'r')
+				for line in file.read().split('\n'):
+					if line:
+						x, y, piece = line.split(',')
+						data[(int(x),int(y))] = piece
+				file.close()
+
+				# Get types of chess pieces
+				chess_piece_types = set()
+				for chess_piece in data.values():
+					chess_piece_types.add(chess_piece.split('_')[1])
+
+				# Find out what type of chess it is
+				chess_type = 'CHESS'
+				for piece in chess_piece_types:
+					if piece not in settings.parameters['CHESS']['TYPES_OF_CHESS_PIECES']:
+						chess_type = 'XIANGQI'
+				
+				# Change chess type if neccessary
+				if chess_type != settings.state['chess_type']:
+					self.chess_type_var.set(chess_type)
+					self.change_chess_type(chess_type)
+				
+				# Update chess pieces
+				self.chessboard.clear_pieces_from_board()
+				for coordinate, piece in data.items():
+					self.chessboard.add_piece_to_board(coordinate, piece)
+				settings.state['clear_move_list']()
+
+		tkinter.Button(main_frame, text='Load from file', command=load_from_file, width=BUTTON_WIDTH).pack(anchor='w')

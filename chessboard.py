@@ -1,5 +1,4 @@
 import tkinter
-from PIL import Image, ImageTk
 
 import settings
 import moves
@@ -197,11 +196,71 @@ class ChessBoard:
 		current_move.update(settings.state, coordinate)
 
 		# Execute move
+		def move_normally(move):
+			self.remove_piece_from_board(move.start_pos)
+			if move.piece_taken != '':
+				self.remove_piece_from_board(move.piece_taken_pos)
+			self.add_piece_to_board(move.end_pos, move.end_piece)
+
 		if current_move.start_pos != 0 and current_move.end_pos != 0:
-			self.remove_piece_from_board(current_move.start_pos)
-			if current_move.piece_taken != '':
-				self.remove_piece_from_board(current_move.piece_taken_pos)
-			self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+			# Move king (including castling)
+			if current_move.start_piece == 'white_king':
+				# Update castling states
+				for castle_type in ('white_short', 'white_long'):
+					if settings.state['CHESS']['CASTLE'][castle_type]:
+						current_move.disabled_castling.append(castle_type)
+						settings.state['CHESS']['CASTLE'][castle_type] = False
+
+				if current_move.start_pos == (4,7) and current_move.end_pos == (6,7):
+					self.remove_piece_from_board(current_move.start_pos)
+					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+					self.remove_piece_from_board((7,7))
+					self.add_piece_to_board((5,7), 'white_rook')
+				elif current_move.start_pos == (4,7) and current_move.end_pos == (2,7):
+					self.remove_piece_from_board(current_move.start_pos)
+					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+					self.remove_piece_from_board((0,7))
+					self.add_piece_to_board((3,7), 'white_rook')
+				else:
+					move_normally(current_move)
+			elif current_move.start_piece == 'black_king':
+				for castle_type in ('black_short', 'black_long'):
+					if settings.state['CHESS']['CASTLE'][castle_type]:
+						current_move.disabled_castling.append(castle_type)
+						settings.state['CHESS']['CASTLE'][castle_type] = False
+
+				if current_move.start_pos == (4,0) and current_move.end_pos == (6,0):
+					self.remove_piece_from_board(current_move.start_pos)
+					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+					self.remove_piece_from_board((7,0))
+					self.add_piece_to_board((5,0), 'black_rook')
+				elif current_move.start_pos == (4,0) and current_move.end_pos == (2,0):
+					self.remove_piece_from_board(current_move.start_pos)
+					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+					self.remove_piece_from_board((0,0))
+					self.add_piece_to_board((3,0), 'black_rook')
+				else:
+					move_normally(current_move)
+			elif current_move.start_piece == 'white_rook' and current_move.start_pos == (7,7) and settings.state['CHESS']['CASTLE']['white_short']:
+				settings.state['CHESS']['CASTLE']['white_short'] = False
+				current_move.disabled_castling.append('white_short')
+				move_normally(current_move)
+			elif current_move.start_piece == 'white_rook' and current_move.start_pos == (0,7) and settings.state['CHESS']['CASTLE']['white_long']:
+				settings.state['CHESS']['CASTLE']['white_long'] = False
+				current_move.disabled_castling.append('white_long')
+				move_normally(current_move)
+			elif current_move.start_piece == 'black_rook' and current_move.start_pos == (7,0) and settings.state['CHESS']['CASTLE']['black_short']:
+				settings.state['CHESS']['CASTLE']['black_short'] = False
+				current_move.disabled_castling.append('black_short')
+				move_normally(current_move)
+			elif current_move.start_piece == 'black_rook' and current_move.start_pos == (0,0) and settings.state['CHESS']['CASTLE']['black_long']:
+				settings.state['CHESS']['CASTLE']['black_long'] = False
+				current_move.disabled_castling.append('black_long')
+				move_normally(current_move)
+				
+			# Move pieces with no special moves
+			else:
+				move_normally(current_move)
 
 			# Record move
 			settings.state['current_move_index'] += 1
@@ -220,10 +279,32 @@ class ChessBoard:
 			move = settings.state['move_list'][index]
 
 			# Reverse move
-			self.remove_piece_from_board(move.end_pos)
-			self.add_piece_to_board(move.start_pos, move.start_piece)
-			if move.piece_taken != '':
-				self.add_piece_to_board(move.end_pos, move.piece_taken)
+			def take_back_normally(move):
+				self.remove_piece_from_board(move.end_pos)
+				self.add_piece_to_board(move.start_pos, move.start_piece)
+				if move.piece_taken != '':
+					self.add_piece_to_board(move.piece_taken_pos, move.piece_taken)
+				for castle_type in move.disabled_castling:
+					settings.state['CHESS']['CASTLE'][castle_type] = True
+
+			if move.start_piece == 'white_king' and move.start_pos == (4,7):
+				if move.end_pos == (6,7):
+					self.remove_piece_from_board((5,7))
+					self.add_piece_to_board((7,7), 'white_rook')
+				elif move.end_pos == (2,7):
+					self.remove_piece_from_board((3,7))
+					self.add_piece_to_board((0,7), 'white_rook')
+				take_back_normally(move)
+			elif move.start_piece == 'black_king' and move.start_pos == (4,0):
+				if move.end_pos == (6,0):
+					self.remove_piece_from_board((5,0))
+					self.add_piece_to_board((7,0), 'black_rook')
+				elif move.end_pos == (2,0):
+					self.remove_piece_from_board((3,0))
+					self.add_piece_to_board((0,0), 'black_rook')
+				take_back_normally(move)
+			else:
+				take_back_normally(move)
 
 			# Update state
 			settings.state['current_move_index'] -= 1
@@ -237,10 +318,32 @@ class ChessBoard:
 			move = settings.state['move_list'][index+1]
 
 			# Execute move
-			self.remove_piece_from_board(move.start_pos)
-			if move.piece_taken != '':
-				self.remove_piece_from_board(move.end_pos)
-			self.add_piece_to_board(move.end_pos, move.end_piece)
+			def forward_normally(move):
+				self.remove_piece_from_board(move.start_pos)
+				if move.piece_taken != '':
+					self.remove_piece_from_board(move.end_pos)
+				self.add_piece_to_board(move.end_pos, move.end_piece)
+				for castle_type in move.disabled_castling:
+					settings.state['CHESS']['CASTLE'][castle_type] = False
+			
+			if move.start_piece == 'white_king' and move.start_pos == (4,7):
+				if move.end_pos == (6,7):
+					self.remove_piece_from_board((7,7))
+					self.add_piece_to_board((5,7), 'white_rook')
+				elif move.end_pos == (2,7):
+					self.remove_piece_from_board((0,7))
+					self.add_piece_to_board((3,7), 'white_rook')
+				forward_normally(move)
+			elif move.start_piece == 'black_king' and move.start_pos == (4,0):
+				if move.end_pos == (6,0):
+					self.remove_piece_from_board((7,0))
+					self.add_piece_to_board((5,0), 'black_rook')
+				elif move.end_pos == (2,0):
+					self.remove_piece_from_board((0,0))
+					self.add_piece_to_board((3,0), 'black_rook')
+				forward_normally(move)
+			else:
+				forward_normally(move)
 
 			# Update state
 			settings.state['current_move_index'] += 1

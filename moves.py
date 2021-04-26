@@ -15,6 +15,8 @@ class Moves:
 		self.piece_taken = ''
 		self.piece_taken_pos = ''
 
+		self.disabled_castling = list()
+
 
 	def details(self):
 		print(self.player_color, self.start_piece, 'from', self.start_pos, 'to', self.end_pos, 'taking', self.piece_taken)
@@ -40,19 +42,71 @@ class Moves:
 				self.start_piece = selected_piece
 				self.start_pos = coordinate
 			else:
-				# Register piece taken
-				if selected_piece != '':
+				def record_end_piece_and_pos(selected_piece, coordinate):
+					self.end_piece = self.start_piece
+					self.end_pos = coordinate
 					self.piece_taken = selected_piece
 					self.piece_taken_pos = coordinate
-
 				# Record end_piece and end_pos
-				if self.start_piece == 'white_pawn' and coordinate[1] == 0:
-					self.end_piece = self.pawn_promotion('white')
-				elif self.start_piece == 'black_pawn' and coordinate[1] == 7:
-					self.end_piece = self.pawn_promotion('black')
+
+				# King
+				if self.start_piece == 'white_king':
+					if settings.state['CHESS']['CASTLE']['white_short'] and coordinate == (6,7) and (5,7) not in settings.state['position']:
+						self.end_piece = self.start_piece
+						self.end_pos = coordinate
+					elif settings.state['CHESS']['CASTLE']['white_long'] and coordinate == (2,7) and (1,7) not in settings.state['position'] and (3,7) not in settings.state['position']:
+						self.end_piece = self.start_piece
+						self.end_pos = coordinate
+					elif abs(self.start_pos[0] - coordinate[0]) < 2 and abs(self.start_pos[1] - coordinate[1]) < 2:
+						record_end_piece_and_pos(selected_piece, coordinate)
+				elif self.start_piece == 'black_king':
+					if settings.state['CHESS']['CASTLE']['black_short'] and coordinate == (6,0) and (5,0) not in settings.state['position']:
+						self.end_piece = self.start_piece
+						self.end_pos = coordinate
+					elif settings.state['CHESS']['CASTLE']['black_long'] and coordinate == (2,0) and (1,0) not in settings.state['position'] and (3,0) not in settings.state['position']:
+						self.end_piece = self.start_piece
+						self.end_pos = coordinate
+					elif abs(self.start_pos[0] - coordinate[0]) < 2 and abs(self.start_pos[1] - coordinate[1]) < 2:
+						record_end_piece_and_pos(selected_piece, coordinate)
+				elif self.start_piece == 'white_pawn':
+					if self.start_pos[0] == coordinate[0] and coordinate not in settings.state['position']:
+						if self.start_pos[1] == 6 and coordinate[1] == 4:
+							self.end_piece = self.start_piece
+							self.end_pos = coordinate
+						elif self.start_pos[1] == coordinate[1] + 1:
+							self.end_piece = self.start_piece
+							self.end_pos = coordinate
+					elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] + 1:
+						if coordinate in settings.state['position'] and settings.state['position'][coordinate].split('_')[0] == 'black':
+							record_end_piece_and_pos(selected_piece, coordinate)
+						# En passant
+						elif self.start_pos[1] == 3 and settings.state['move_list'][-1].start_piece == 'black_pawn' and settings.state['move_list'][-1].end_pos[0] == coordinate[0] and settings.state['move_list'][-1].end_pos[1] == settings.state['move_list'][-1].start_pos[1] + 2:
+							self.end_piece = self.start_piece
+							self.end_pos = coordinate
+							self.piece_taken = 'black_pawn'
+							self.piece_taken_pos = (coordinate[0], coordinate[1]+1)
+					if self.end_pos != 0 and self.end_pos[1] == 0:
+						self.end_piece = self.pawn_promotion('white')
+				elif self.start_piece == 'black_pawn':
+					if self.start_pos[0] == coordinate[0] and coordinate not in settings.state['position']:
+						if self.start_pos[1] == 1 and coordinate[1] == 3:
+							record_end_piece_and_pos(selected_piece, coordinate)
+						elif self.start_pos[1] == coordinate[1] - 1:
+							record_end_piece_and_pos(selected_piece, coordinate)
+					elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] - 1:
+						if coordinate in settings.state['position'] and settings.state['position'][coordinate].split('_')[0] == 'white':
+							record_end_piece_and_pos(selected_piece, coordinate)
+						# En passant
+						elif self.start_pos[1] == 4 and settings.state['move_list'][-1].start_piece == 'white_pawn' and settings.state['move_list'][-1].end_pos[0] == coordinate[0] and settings.state['move_list'][-1].end_pos[1] == settings.state['move_list'][-1].start_pos[1] - 2:
+							self.end_piece = self.start_piece
+							self.end_pos = coordinate
+							self.piece_taken = 'black_pawn'
+							self.piece_taken_pos = (coordinate[0], coordinate[1]-1)
+					if self.end_pos != 0 and self.end_pos[1] == 7:
+						self.end_piece = self.pawn_promotion('black')
 				else:
-					self.end_piece = self.start_piece
-				self.end_pos = coordinate
+					record_end_piece_and_pos(selected_piece, coordinate)
+
 
 	def pawn_promotion(self, color):
 		class promotion_prompt:
