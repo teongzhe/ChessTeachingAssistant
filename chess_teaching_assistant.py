@@ -14,6 +14,8 @@ class MainWindow:
 
 		self.state = dict()
 		self.initialize_state()
+
+
 		
 		###########################################################
 		###					Organize panels						###
@@ -25,6 +27,7 @@ class MainWindow:
 		self.left_panel.frame.pack(side=tkinter.LEFT)
 		self.center.canvas.pack(side=tkinter.LEFT)
 		self.right_panel.frame.pack(side=tkinter.LEFT)
+
 
 	def initialize_parameters(self):
 		self.parameters['CHESSBOARD_CANVAS_SIZE'] = 700
@@ -43,6 +46,7 @@ class MainWindow:
 	
 	def initialize_state(self):
 		self.state['chess_type'] = 'CHESS'
+		self.state['CHESS'] = dict()
 
 		# Set initial state for move_list etc
 		def function_to_clear_move_list():
@@ -50,8 +54,23 @@ class MainWindow:
 			self.state['previous_player'] = ''
 			self.state['current_move'] = moves.Moves()
 			self.state['current_move_index'] = -1
+
+			if self.state['chess_type'] == 'CHESS':
+				self.state['CHESS']['CASTLE'] = {'white_short':False, 'white_long':False, 'black_short':False, 'black_long':False}
+				castle = self.state['CHESS']['CASTLE']
+				
+				if (4,7) in self.state['position'] and self.state['position'][(4,7)] == 'white_king':
+					if (7,7) in self.state['position'] and self.state['position'][(7,7)] == 'white_rook':
+						castle['white_short'] = True
+					if (0,7) in self.state['position'] and self.state['position'][(0,7)] == 'white_rook':
+						castle['white_long'] = True
+				if (4,0) in self.state['position'] and self.state['position'][(4,0)] == 'black_king':
+					if (7,0) in self.state['position'] and self.state['position'][(7,0)] == 'black_rook':
+						castle['black_short'] = True
+					if (0,0) in self.state['position'] and self.state['position'][(0,0)] == 'black_rook':
+						castle['black_long'] = True
+
 		self.state['clear_move_list'] = function_to_clear_move_list
-		self.state['clear_move_list']()
 
 
 

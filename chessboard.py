@@ -288,6 +288,8 @@ class ChessBoard:
 					self.remove_piece_from_board(current_move.piece_taken_pos)
 				
 				self.remove_piece_from_board(current_move.start_pos)
+
+				# Handle pawn promotion
 				if current_move.moved_piece == 'pawn':
 					if current_move.player_color == 'white' and current_move.end_pos[1] == 0:
 						current_move.promoted_to = self.pawn_promotion(current_move.player_color)
@@ -317,7 +319,6 @@ class ChessBoard:
 				self.promotion_window.title('Promotion')
 
 				def callback(chosen_piece):
-					print(chosen_piece)
 					self.piece_to_promote_to = chosen_piece
 					self.promotion_window.destroy()
 
@@ -362,7 +363,10 @@ class ChessBoard:
 			self.remove_piece_from_board(move.start_pos)
 			if move.piece_taken != '':
 				self.remove_piece_from_board(move.end_pos)
-			self.add_piece_to_board(move.end_pos, move.player_color + '_' + move.moved_piece)
+			if move.promoted_to != '':
+				self.add_piece_to_board(move.end_pos, move.promoted_to)
+			else:
+				self.add_piece_to_board(move.end_pos, move.player_color + '_' + move.moved_piece)
 
 			# Update state
 			self.state['current_move_index'] += 1
