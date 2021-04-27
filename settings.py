@@ -14,9 +14,9 @@ def init(master):
 	parameters = dict()
 
 	# Commonly used measurements
-	parameters["CHESSBOARD_CANVAS_SIZE"] = 700
-	parameters["BOARD_MARGIN"] = int(0.1 * parameters["CHESSBOARD_CANVAS_SIZE"])
-	parameters["BOARD_SIZE"] = int(0.8 * parameters["CHESSBOARD_CANVAS_SIZE"])
+	parameters["CHESSBOARD_CANVAS_SIZE"] = 600
+	parameters["BOARD_MARGIN"] = int(0.05 * parameters["CHESSBOARD_CANVAS_SIZE"])
+	parameters["BOARD_SIZE"] = int(0.9 * parameters["CHESSBOARD_CANVAS_SIZE"])
 	parameters["HIGHLIGHT_LINEWIDTH"] = 7
 	parameters["HIGHLIGHT_COLOR"] = "blue"
 

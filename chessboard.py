@@ -224,6 +224,7 @@ class ChessBoard:
 		settings.state["position"] = dict()
 
 		settings.state["clear_move_list"]()
+		settings.state["highlight_active_square"](0)
 
 	def move_piece(self, coordinate):
 		current_move = settings.state["current_move"]
@@ -428,3 +429,4 @@ class ChessBoard:
 				self.add_piece_to_board((i,3), "black_bing")
 		
 		settings.state["clear_move_list"]()
+		settings.state["highlight_active_square"](0)

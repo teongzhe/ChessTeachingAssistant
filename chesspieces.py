@@ -25,6 +25,7 @@ class ChessPieces:
 			if settings.state["selected_piece_to_add_to_board"] != var.get():
 				if var.get() != "deselect":
 					settings.state["clear_move_list"]()
+					settings.state["highlight_active_square"]
 
 				settings.state["selected_piece_to_add_to_board"] = var.get()
 				settings.state["game_is_ongoing"] = True if var.get() == "deselect" else False

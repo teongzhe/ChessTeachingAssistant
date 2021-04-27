@@ -62,6 +62,7 @@ class ActionPanel:
 			for coordinate, piece in settings.state["quick_save_position"].items():
 				self.chessboard.add_piece_to_board(coordinate, piece)
 			settings.state["clear_move_list"]()
+			settings.state["highlight_active_square"](0)
 		tkinter.Button(main_frame, text="Quick load", command=quickload, width=BUTTON_WIDTH).pack(anchor="w")
 
 		# Save to file
@@ -109,5 +110,6 @@ class ActionPanel:
 				for coordinate, piece in data.items():
 					self.chessboard.add_piece_to_board(coordinate, piece)
 				settings.state["clear_move_list"]()
+				settings.state["highlight_active_square"](0)
 
 		tkinter.Button(main_frame, text="Load from file", command=load_from_file, width=BUTTON_WIDTH).pack(anchor="w")
