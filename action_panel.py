@@ -36,6 +36,7 @@ class ActionPanel:
 		self.chesspieces.initialize_menu()
 
 		settings.state["clear_move_list"]()
+		settings.state["highlight_active_square"](0)
 
 	def chessboard_state_panel(self):
 		BUTTON_WIDTH = 20

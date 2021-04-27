@@ -25,7 +25,7 @@ class MainWindow:
 		self.action_panel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chess_pieces_menu, self.chessboard)
 
 		# Text panel
-		self.text_panel = tkinter.Entry(root, width=15, font=(False,48), justify=tkinter.CENTER)
+		self.text_panel = tkinter.Entry(root, width=20, font=(False,48), justify=tkinter.CENTER)
 
 		def focus_root(event):
 			root.focus_set()

@@ -17,6 +17,8 @@ def init(master):
 	parameters["CHESSBOARD_CANVAS_SIZE"] = 700
 	parameters["BOARD_MARGIN"] = int(0.1 * parameters["CHESSBOARD_CANVAS_SIZE"])
 	parameters["BOARD_SIZE"] = int(0.8 * parameters["CHESSBOARD_CANVAS_SIZE"])
+	parameters["HIGHLIGHT_LINEWIDTH"] = 7
+	parameters["HIGHLIGHT_COLOR"] = "blue"
 
 	# Chess
 	parameters["CHESS"] = dict()
@@ -77,6 +79,7 @@ def init(master):
 
 	# Set initial state for move_list etc
 	def function_to_clear_move_list():
+		state["active_square"] = 0
 		state["move_list"] = list()
 		state["previous_player"] = ""
 		state["current_move"] = moves.Moves()

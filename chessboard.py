@@ -11,6 +11,10 @@ class ChessBoard:
 		self.chess_board_objects = list()
 		self.chess_pieces_objects = dict()
 
+		# Prepare to highlight active square
+		self.active_square_objects = list()
+		settings.state["highlight_active_square"] = self.highlight_active_square
+
 		# Initialize chess board
 		self.initialize_chess_board()
 
@@ -30,6 +34,36 @@ class ChessBoard:
 			self.draw_xiangqi_board()
 
 		self.starting_positions()
+
+	def highlight_active_square(self, square):
+		# Clear previous active square
+		for object in self.active_square_objects:
+			self.canvas.delete(object)
+		self.active_square_objects = list()
+
+		# Highlight active square
+		if square != 0:
+			x,y = settings.parameters[settings.state["chess_type"]]["CENTER"][square]
+			size = int(0.5 * settings.parameters[settings.state["chess_type"]]["CELL_SIZE"])
+			length = int(0.7 * size)
+			linewidth = settings.parameters["HIGHLIGHT_LINEWIDTH"]
+			color = settings.parameters["HIGHLIGHT_COLOR"]
+
+			# Top left corner
+			self.active_square_objects.append(self.canvas.create_line(x-size+0.5*linewidth, y-size, x-size+0.5*linewidth, y-size+length, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_line(x-size, y-size+0.5*linewidth, x-size+length, y-size+0.5*linewidth, width=linewidth, fill=color))
+
+			# Top right corner
+			self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y-size, x+size-0.5*linewidth, y-size+length, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_line(x+size, y-size+0.5*linewidth, x+size-length, y-size+0.5*linewidth, width=linewidth, fill=color))
+
+			# Bottom left corner
+			self.active_square_objects.append(self.canvas.create_line(x-size+0.5*linewidth, y+size, x-size+0.5*linewidth, y+size-length, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_line(x-size, y+size-0.5*linewidth, x-size+length, y+size-0.5*linewidth, width=linewidth, fill=color))
+
+			# Bottom right corner
+			self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y+size, x+size-0.5*linewidth, y+size-length, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_line(x+size, y+size-0.5*linewidth, x+size-length, y+size-0.5*linewidth, width=linewidth, fill=color))
 
 
 	def draw_chess_board(self):
@@ -261,6 +295,9 @@ class ChessBoard:
 			# Move pieces with no special moves
 			else:
 				move_normally(current_move)
+			
+			# Highlight destination square
+			self.highlight_active_square(current_move.end_pos)
 
 			# Record move
 			settings.state["current_move_index"] += 1
@@ -305,6 +342,9 @@ class ChessBoard:
 				take_back_normally(move)
 			else:
 				take_back_normally(move)
+			
+			# Highlight square
+			self.highlight_active_square(move.start_pos)
 
 			# Update state
 			settings.state["current_move_index"] -= 1
@@ -344,6 +384,9 @@ class ChessBoard:
 				forward_normally(move)
 			else:
 				forward_normally(move)
+			
+			# Highlight square
+			self.highlight_active_square(move.start_pos)
 
 			# Update state
 			settings.state["current_move_index"] += 1
