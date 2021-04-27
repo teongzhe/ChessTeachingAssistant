@@ -184,6 +184,13 @@ class ChessBoard:
 		if event.x > BOARD_X_START and event.x < BOARD_X_END and event.y > BOARD_Y_START and event.y < BOARD_Y_END:
 			x = int((event.x - BOARD_X_START) / CELL_SIZE)
 			y = int((event.y - BOARD_Y_START) / CELL_SIZE)
+
+			# Check if x,y exceed allowed values
+			if x == settings.parameters[settings.state["chess_type"]]["CHESSBOARD_X_ARRAY"]:
+				x -= 1
+			if y == settings.parameters[settings.state["chess_type"]]["CHESSBOARD_Y_ARRAY"]:
+				y -= 1
+			
 			coordinate = (x,y)
 
 			# Check if game is ongoing
