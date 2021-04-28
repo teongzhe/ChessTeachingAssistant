@@ -43,27 +43,30 @@ class ChessBoard:
 
 		# Highlight active square
 		if square != 0:
+			linewidth = settings.parameters[settings.state["chess_type"]]["HIGHLIGHT_LINEWIDTH"]
+			color = settings.parameters[settings.state["chess_type"]]["HIGHLIGHT_COLOR"]
 			x,y = settings.parameters[settings.state["chess_type"]]["CENTER"][square]
-			size = int(0.5 * settings.parameters[settings.state["chess_type"]]["CELL_SIZE"])
-			length = int(0.7 * size)
-			linewidth = settings.parameters["HIGHLIGHT_LINEWIDTH"]
-			color = settings.parameters["HIGHLIGHT_COLOR"]
+			size = 0.5 * settings.parameters[settings.state["chess_type"]]["CELL_SIZE"]
+			length = 0.6 * size
 
 			# Top left corner
-			self.active_square_objects.append(self.canvas.create_line(x-size+0.5*linewidth, y-size, x-size+0.5*linewidth, y-size+length, width=linewidth, fill=color))
-			self.active_square_objects.append(self.canvas.create_line(x-size, y-size+0.5*linewidth, x-size+length, y-size+0.5*linewidth, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x-size, y-size, x-size+length, y-size+linewidth, width=0, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x-size, y-size, x-size+linewidth, y-size+length, width=0, fill=color))
 
 			# Top right corner
-			self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y-size, x+size-0.5*linewidth, y-size+length, width=linewidth, fill=color))
-			self.active_square_objects.append(self.canvas.create_line(x+size, y-size+0.5*linewidth, x+size-length, y-size+0.5*linewidth, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y-size, x+size-length, y-size+linewidth, width=0, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y-size, x+size-linewidth, y-size+length, width=0, fill=color))
 
 			# Bottom left corner
-			self.active_square_objects.append(self.canvas.create_line(x-size+0.5*linewidth, y+size, x-size+0.5*linewidth, y+size-length, width=linewidth, fill=color))
-			self.active_square_objects.append(self.canvas.create_line(x-size, y+size-0.5*linewidth, x-size+length, y+size-0.5*linewidth, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x-size, y+size, x-size+length, y+size-linewidth, width=0, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x-size, y+size, x-size+linewidth, y+size-length, width=0, fill=color))
 
 			# Bottom right corner
-			self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y+size, x+size-0.5*linewidth, y+size-length, width=linewidth, fill=color))
-			self.active_square_objects.append(self.canvas.create_line(x+size, y+size-0.5*linewidth, x+size-length, y+size-0.5*linewidth, width=linewidth, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y+size, x+size-length, y+size-linewidth, width=0, fill=color))
+			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y+size, x+size-linewidth, y+size-length, width=0, fill=color))
+
+			# self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y+size-0.25*linewidth, x+size-0.5*linewidth, y+size-length, width=linewidth, fill=color))
+			# self.active_square_objects.append(self.canvas.create_line(x+size-0.25*linewidth, y+size-0.5*linewidth, x+size-length, y+size-0.5*linewidth, width=linewidth, fill=color))
 
 
 	def draw_chess_board(self):
@@ -181,7 +184,7 @@ class ChessBoard:
 		BOARD_Y_END = settings.parameters[settings.state["chess_type"]]["BOARD_Y_END"]
 
 		# Handle events within the chessboard
-		if event.x > BOARD_X_START and event.x < BOARD_X_END and event.y > BOARD_Y_START and event.y < BOARD_Y_END:
+		if BOARD_X_START < event.x < BOARD_X_END and BOARD_Y_START < event.y < BOARD_Y_END:
 			x = int((event.x - BOARD_X_START) / CELL_SIZE)
 			y = int((event.y - BOARD_Y_START) / CELL_SIZE)
 

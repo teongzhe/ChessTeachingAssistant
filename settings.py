@@ -18,11 +18,17 @@ def init(master):
 	parameters["CHESSBOARD_CANVAS_SIZE"] = 600
 	parameters["BOARD_MARGIN"] = int(0.05 * parameters["CHESSBOARD_CANVAS_SIZE"])
 	parameters["BOARD_SIZE"] = int(0.9 * parameters["CHESSBOARD_CANVAS_SIZE"])
-	parameters["HIGHLIGHT_LINEWIDTH"] = 7
-	parameters["HIGHLIGHT_COLOR"] = "blue"
+
+	# Highlight parameters
+	parameters["CHESS"] = dict()
+	parameters["CHESS"]["HIGHLIGHT_LINEWIDTH"] = 7
+	parameters["CHESS"]["HIGHLIGHT_COLOR"] = "red"
+
+	parameters["XIANGQI"] = dict()
+	parameters["XIANGQI"]["HIGHLIGHT_LINEWIDTH"] = 4
+	parameters["XIANGQI"]["HIGHLIGHT_COLOR"] = "blue"
 
 	# Chess
-	parameters["CHESS"] = dict()
 	parameters["CHESS"]["IMG"] = dict()
 	parameters["CHESS"]["PLAYER_COLORS"] = ("white","black")
 	parameters["CHESS"]["TYPES_OF_CHESS_PIECES"] = ("king","queen","rook","knight","bishop","pawn")
@@ -44,7 +50,6 @@ def init(master):
 			parameters["CHESS"]["CENTER"][(i,j)] = (int((i+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]), int((j+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]))
 
 	# Xiangqi
-	parameters["XIANGQI"] = dict()
 	parameters["XIANGQI"]["IMG"] = dict()
 	parameters["XIANGQI"]["PLAYER_COLORS"] = ("red","black")
 	parameters["XIANGQI"]["TYPES_OF_CHESS_PIECES"] = ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing")
