@@ -65,8 +65,6 @@ class ChessBoard:
 			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y+size, x+size-length, y+size-linewidth, width=0, fill=color))
 			self.active_square_objects.append(self.canvas.create_rectangle(x+size, y+size, x+size-linewidth, y+size-length, width=0, fill=color))
 
-			# self.active_square_objects.append(self.canvas.create_line(x+size-0.5*linewidth, y+size-0.25*linewidth, x+size-0.5*linewidth, y+size-length, width=linewidth, fill=color))
-			# self.active_square_objects.append(self.canvas.create_line(x+size-0.25*linewidth, y+size-0.5*linewidth, x+size-length, y+size-0.5*linewidth, width=linewidth, fill=color))
 
 
 	def draw_chess_board(self):
