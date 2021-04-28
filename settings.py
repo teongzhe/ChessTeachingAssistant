@@ -82,6 +82,7 @@ def init(master):
 	state["position"] = dict()
 
 	state["saved_caption"] = ""
+	state["quick_save_position"] = dict()
 
 	state["CHESS"] = dict()
 	state["XIANGQI"] = dict()

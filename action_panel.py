@@ -36,7 +36,7 @@ class ActionPanel:
 		self.chesspieces.initialize_menu()
 
 		settings.state["clear_move_list"]()
-		settings.state["highlight_active_square"](0)
+		settings.state["remove_highlights"]()
 
 	def chessboard_state_panel(self):
 		BUTTON_WIDTH = 20
@@ -63,7 +63,7 @@ class ActionPanel:
 			for coordinate, piece in settings.state["quick_save_position"].items():
 				self.chessboard.add_piece_to_board(coordinate, piece)
 			settings.state["clear_move_list"]()
-			settings.state["highlight_active_square"](0)
+			settings.state["remove_highlights"]()
 
 			settings.state["text_panel"].delete(0, tkinter.END)
 			settings.state["text_panel"].insert(0, settings.state["saved_caption"])
@@ -124,6 +124,6 @@ class ActionPanel:
 						msg = "Coordinate " + str(coordinate) + " is out of range!\nThe piece will be ignored."
 						messagebox.showerror("Warning", msg)
 				settings.state["clear_move_list"]()
-				settings.state["highlight_active_square"](0)
+				settings.state["remove_highlights"]()
 
 		tkinter.Button(main_frame, text="Load from file", command=load_from_file, width=BUTTON_WIDTH).pack(anchor="w")

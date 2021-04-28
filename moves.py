@@ -36,13 +36,11 @@ class Moves:
 					self.player_color = player_color
 					self.start_piece = selected_piece
 					self.start_pos = coordinate
-					settings.state["highlight_active_square"](coordinate)
 		else:
 			# Change selection to new chess piece at specified coordinate
 			if selected_piece != "" and player_color == self.player_color:
 				self.start_piece = selected_piece
 				self.start_pos = coordinate
-				settings.state["highlight_active_square"](coordinate)
 			else:
 				if settings.state["chess_type"] == "CHESS":
 					self.chess_move_checker(selected_piece, coordinate)
@@ -55,8 +53,6 @@ class Moves:
 		self.piece_taken = selected_piece
 		self.piece_taken_pos = coordinate
 		
-		settings.state["highlight_active_square"](coordinate)
-
 
 
 	###########################################################
