@@ -70,6 +70,7 @@ class ActionPanel:
 			filename = filedialog.asksaveasfilename(initialdir=".", title = "Select a File", defaultextension = ".csv", filetypes = (("csv files","*.csv*"), ("all files", "*.*")))
 			if filename != "":
 				file = open(filename, "w")
+				file.write(settings.state["text_panel"].get() + "\n")
 				for key, value in settings.state["position"].items():
 					file.write(str(key[0]) + "," + str(key[1]) + "," + str(value) + "\n")
 				file.close()
@@ -83,7 +84,12 @@ class ActionPanel:
 			if filename != "":			
 				data = dict()
 				file = open(filename, "r")
-				for line in file.read().split("\n"):
+
+				lines = file.read().split("\n")
+				settings.state["text_panel"].delete(0, tkinter.END)
+				settings.state["text_panel"].insert(0, lines[0])
+
+				for line in lines[1:]:
 					if line:
 						x, y, piece = line.split(",")
 						data[(int(x),int(y))] = piece
