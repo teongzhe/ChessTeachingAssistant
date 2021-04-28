@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import messagebox
 from PIL import Image, ImageTk
 
 import moves
@@ -106,15 +107,21 @@ def init(master):
 	###			Read images for chess pieces				###
 	###########################################################
 	def process_png(chess_piece, img_size):
-		img = Image.open("img/" + chess_piece + ".png")
+		try:
+			img = Image.open("img/" + chess_piece + ".png")
 
-		# Scale image
-		longer_side = img.size[0] if img.size[0] > img.size[1] else img.size[1]
-		scaling_factor = img_size / longer_side
-		scaled_size = (int(scaling_factor*img.size[0]), int(scaling_factor*img.size[1]))
-		img = img.resize(scaled_size)
+			# Scale image
+			longer_side = img.size[0] if img.size[0] > img.size[1] else img.size[1]
+			scaling_factor = img_size / longer_side
+			scaled_size = (int(scaling_factor*img.size[0]), int(scaling_factor*img.size[1]))
+			img = img.resize(scaled_size)
 
-		return ImageTk.PhotoImage(img)
+			return ImageTk.PhotoImage(img)
+		except FileNotFoundError as e:
+			print(e)
+			messagebox.showerror("Error", e)
+			exit(1)
+
 
 	for chess_type in ("CHESS", "XIANGQI"):
 		for color in parameters[chess_type]["PLAYER_COLORS"]:

@@ -185,11 +185,12 @@ class ChessBoard:
 			x = int((event.x - BOARD_X_START) / CELL_SIZE)
 			y = int((event.y - BOARD_Y_START) / CELL_SIZE)
 
-			# Check if x,y exceed allowed values
-			if x == settings.parameters[settings.state["chess_type"]]["CHESSBOARD_X_ARRAY"]:
-				x -= 1
-			if y == settings.parameters[settings.state["chess_type"]]["CHESSBOARD_Y_ARRAY"]:
-				y -= 1
+			# Check if x,y are allowed values
+			if x < 0: x = 0
+			if x >= settings.parameters[settings.state["chess_type"]]["CHESSBOARD_X_ARRAY"]: x = settings.parameters[settings.state["chess_type"]]["CHESSBOARD_X_ARRAY"] - 1
+
+			if y < 0: y = 0
+			if y >= settings.parameters[settings.state["chess_type"]]["CHESSBOARD_Y_ARRAY"]: y = settings.parameters[settings.state["chess_type"]]["CHESSBOARD_Y_ARRAY"] - 1
 			
 			coordinate = (x,y)
 

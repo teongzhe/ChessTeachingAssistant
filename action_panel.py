@@ -1,5 +1,5 @@
 import tkinter
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import copy
 
 import settings
@@ -108,7 +108,11 @@ class ActionPanel:
 				# Update chess pieces
 				self.chessboard.clear_pieces_from_board()
 				for coordinate, piece in data.items():
-					self.chessboard.add_piece_to_board(coordinate, piece)
+					if 0 <= coordinate[0] < settings.parameters[settings.state["chess_type"]]["CHESSBOARD_X_ARRAY"] and 0 <= coordinate[1] < settings.parameters[settings.state["chess_type"]]["CHESSBOARD_Y_ARRAY"]:
+						self.chessboard.add_piece_to_board(coordinate, piece)
+					else:
+						msg = "Coordinate " + str(coordinate) + " is out of range!\nThe piece will be ignored."
+						messagebox.showerror("Warning", msg)
 				settings.state["clear_move_list"]()
 				settings.state["highlight_active_square"](0)
 
