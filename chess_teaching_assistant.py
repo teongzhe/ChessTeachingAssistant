@@ -26,6 +26,7 @@ class MainWindow:
 
 		# Text panel
 		self.text_panel = tkinter.Entry(root, width=20, font=(False,36), justify=tkinter.CENTER)
+		settings.state["text_panel"] = self.text_panel
 
 		def focus_root(event):
 			root.focus_set()

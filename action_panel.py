@@ -36,7 +36,7 @@ class ActionPanel:
 		self.chesspieces.initialize_menu()
 
 		settings.state["clear_move_list"]()
-		settings.state["highlight_active_square"](0)
+		settings.state["remove_highlights"]()
 
 	def chessboard_state_panel(self):
 		BUTTON_WIDTH = 20
@@ -55,6 +55,7 @@ class ActionPanel:
 		# Quick save and quick load
 		def quicksave():
 			settings.state["quick_save_position"] = copy.deepcopy(settings.state["position"])
+			settings.state["saved_caption"] = settings.state["text_panel"].get()
 		tkinter.Button(main_frame, text="Quick save", command=quicksave, width=BUTTON_WIDTH).pack(anchor="w")
 
 		def quickload():
@@ -62,7 +63,10 @@ class ActionPanel:
 			for coordinate, piece in settings.state["quick_save_position"].items():
 				self.chessboard.add_piece_to_board(coordinate, piece)
 			settings.state["clear_move_list"]()
-			settings.state["highlight_active_square"](0)
+			settings.state["remove_highlights"]()
+
+			settings.state["text_panel"].delete(0, tkinter.END)
+			settings.state["text_panel"].insert(0, settings.state["saved_caption"])
 		tkinter.Button(main_frame, text="Quick load", command=quickload, width=BUTTON_WIDTH).pack(anchor="w")
 
 		# Save to file
@@ -70,6 +74,7 @@ class ActionPanel:
 			filename = filedialog.asksaveasfilename(initialdir=".", title = "Select a File", defaultextension = ".csv", filetypes = (("csv files","*.csv*"), ("all files", "*.*")))
 			if filename != "":
 				file = open(filename, "w")
+				file.write(settings.state["text_panel"].get() + "\n")
 				for key, value in settings.state["position"].items():
 					file.write(str(key[0]) + "," + str(key[1]) + "," + str(value) + "\n")
 				file.close()
@@ -83,7 +88,12 @@ class ActionPanel:
 			if filename != "":			
 				data = dict()
 				file = open(filename, "r")
-				for line in file.read().split("\n"):
+
+				lines = file.read().split("\n")
+				settings.state["text_panel"].delete(0, tkinter.END)
+				settings.state["text_panel"].insert(0, lines[0])
+
+				for line in lines[1:]:
 					if line:
 						x, y, piece = line.split(",")
 						data[(int(x),int(y))] = piece
@@ -97,7 +107,7 @@ class ActionPanel:
 				# Find out what type of chess it is
 				chess_type = "CHESS"
 				for piece in chess_piece_types:
-					if piece not in settings.parameters["CHESS"]["TYPES_OF_CHESS_PIECES"]:
+					if chess_type == "CHESS" and piece not in settings.parameters[chess_type]["TYPES_OF_CHESS_PIECES"]:
 						chess_type = "XIANGQI"
 				
 				# Change chess type if neccessary
@@ -114,6 +124,6 @@ class ActionPanel:
 						msg = "Coordinate " + str(coordinate) + " is out of range!\nThe piece will be ignored."
 						messagebox.showerror("Warning", msg)
 				settings.state["clear_move_list"]()
-				settings.state["highlight_active_square"](0)
+				settings.state["remove_highlights"]()
 
 		tkinter.Button(main_frame, text="Load from file", command=load_from_file, width=BUTTON_WIDTH).pack(anchor="w")

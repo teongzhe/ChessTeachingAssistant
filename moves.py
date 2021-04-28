@@ -36,13 +36,11 @@ class Moves:
 					self.player_color = player_color
 					self.start_piece = selected_piece
 					self.start_pos = coordinate
-					settings.state["highlight_active_square"](coordinate)
 		else:
 			# Change selection to new chess piece at specified coordinate
 			if selected_piece != "" and player_color == self.player_color:
 				self.start_piece = selected_piece
 				self.start_pos = coordinate
-				settings.state["highlight_active_square"](coordinate)
 			else:
 				if settings.state["chess_type"] == "CHESS":
 					self.chess_move_checker(selected_piece, coordinate)
@@ -55,8 +53,6 @@ class Moves:
 		self.piece_taken = selected_piece
 		self.piece_taken_pos = coordinate
 		
-		settings.state["highlight_active_square"](coordinate)
-
 
 
 	###########################################################
@@ -213,26 +209,26 @@ class Moves:
 	def xiangqi_move_checker(self, selected_piece, coordinate):
 		# Shuai
 		if self.start_piece == "red_shuai":
-			if coordinate[0] > 2 and coordinate[0] < 6 and coordinate[1] > 6 and abs(self.start_pos[0] - coordinate[0]) + abs(self.start_pos[1] - coordinate[1]) == 1:
+			if 3 <= coordinate[0] <= 5 and coordinate[1] > 6 and abs(self.start_pos[0] - coordinate[0]) + abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_shuai":
-			if coordinate[0] > 2 and coordinate[0] < 6 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) + abs(self.start_pos[1] - coordinate[1]) == 1:
+			if 3 <= coordinate[0] <= 5 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) + abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 
 		# Shi
 		elif self.start_piece == "red_shi":
-			if coordinate[0] > 2 and coordinate[0] < 6 and coordinate[1] > 6 and abs(self.start_pos[0] - coordinate[0]) == 1 and abs(self.start_pos[1] - coordinate[1]) == 1:
+			if 3 <= coordinate[0] <= 5 and coordinate[1] > 6 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_shi":
-			if coordinate[0] > 2 and coordinate[0] < 6 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) == 1 and abs(self.start_pos[1] - coordinate[1]) == 1:
+			if coordinate[0] > 2 and coordinate[0] < 3 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		
 		# Xiang
 		elif self.start_piece == "red_xiang":
-			if coordinate[1] > 4 and abs(self.start_pos[0] - coordinate[0]) == 2 and abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
+			if coordinate[1] > 4 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_xiang":
-			if coordinate[1] < 6 and abs(self.start_pos[0] - coordinate[0]) == 2 and abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
+			if coordinate[1] < 6 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 
 		# Ju

@@ -18,18 +18,24 @@ def init(master):
 	parameters["CHESSBOARD_CANVAS_SIZE"] = 600
 	parameters["BOARD_MARGIN"] = int(0.05 * parameters["CHESSBOARD_CANVAS_SIZE"])
 	parameters["BOARD_SIZE"] = int(0.9 * parameters["CHESSBOARD_CANVAS_SIZE"])
-	parameters["HIGHLIGHT_LINEWIDTH"] = 7
-	parameters["HIGHLIGHT_COLOR"] = "blue"
+
+	# Highlight parameters
+	parameters["CHESS"] = dict()
+	parameters["CHESS"]["HIGHLIGHT_LINEWIDTH"] = 7
+	parameters["CHESS"]["HIGHLIGHT_COLOR"] = "red"
+
+	parameters["XIANGQI"] = dict()
+	parameters["XIANGQI"]["HIGHLIGHT_LINEWIDTH"] = 4
+	parameters["XIANGQI"]["HIGHLIGHT_COLOR"] = "blue"
 
 	# Chess
-	parameters["CHESS"] = dict()
 	parameters["CHESS"]["IMG"] = dict()
 	parameters["CHESS"]["PLAYER_COLORS"] = ("white","black")
 	parameters["CHESS"]["TYPES_OF_CHESS_PIECES"] = ("king","queen","rook","knight","bishop","pawn")
 
 	parameters["CHESS"]["CHESSBOARD_X_ARRAY"] = 8
 	parameters["CHESS"]["CHESSBOARD_Y_ARRAY"] = 8
-	parameters["CHESS"]["CELL_SIZE"] = int(parameters["BOARD_SIZE"] / 8)
+	parameters["CHESS"]["CELL_SIZE"] = parameters["BOARD_SIZE"] / 8
 	parameters["CHESS"]["TEXT_MARGIN"] = 10
 	parameters["CHESS"]["PIECE_SIZE"] = int(0.8 * parameters["CHESS"]["CELL_SIZE"])
 
@@ -41,17 +47,16 @@ def init(master):
 	parameters["CHESS"]["CENTER"] = dict()
 	for i in range(parameters["CHESS"]["CHESSBOARD_X_ARRAY"]):
 		for j in range(parameters["CHESS"]["CHESSBOARD_Y_ARRAY"]):
-			parameters["CHESS"]["CENTER"][(i,j)] = (int((i+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]), int((j+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]))
+			parameters["CHESS"]["CENTER"][(i,j)] = ((i+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"], (j+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"])
 
 	# Xiangqi
-	parameters["XIANGQI"] = dict()
 	parameters["XIANGQI"]["IMG"] = dict()
 	parameters["XIANGQI"]["PLAYER_COLORS"] = ("red","black")
 	parameters["XIANGQI"]["TYPES_OF_CHESS_PIECES"] = ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing")
 
 	parameters["XIANGQI"]["CHESSBOARD_X_ARRAY"] = 9
 	parameters["XIANGQI"]["CHESSBOARD_Y_ARRAY"] = 10
-	parameters["XIANGQI"]["CELL_SIZE"] = int(parameters["BOARD_SIZE"] / 10)
+	parameters["XIANGQI"]["CELL_SIZE"] = parameters["BOARD_SIZE"] / 10
 	parameters["XIANGQI"]["TEXT_MARGIN"] = 15
 	parameters["XIANGQI"]["PIECE_SIZE"] = int(parameters["XIANGQI"]["CELL_SIZE"])
 
@@ -63,7 +68,7 @@ def init(master):
 	parameters["XIANGQI"]["CENTER"] = dict()
 	for i in range(parameters["XIANGQI"]["CHESSBOARD_X_ARRAY"]):
 		for j in range(parameters["XIANGQI"]["CHESSBOARD_Y_ARRAY"]):
-			parameters["XIANGQI"]["CENTER"][(i,j)] = (int((i+1)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]), int((j+0.5)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"]))
+			parameters["XIANGQI"]["CENTER"][(i,j)] = ((i+1)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"], (j+0.5)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"])
 
 
 
@@ -76,7 +81,11 @@ def init(master):
 	state["chess_type"] = "CHESS"
 	state["position"] = dict()
 
+	state["saved_caption"] = ""
+	state["quick_save_position"] = dict()
+
 	state["CHESS"] = dict()
+	state["XIANGQI"] = dict()
 
 	# Set initial state for move_list etc
 	def function_to_clear_move_list():
