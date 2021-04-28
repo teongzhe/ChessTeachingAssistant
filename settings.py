@@ -81,7 +81,10 @@ def init(master):
 	state["chess_type"] = "CHESS"
 	state["position"] = dict()
 
+	state["saved_caption"] = ""
+
 	state["CHESS"] = dict()
+	state["XIANGQI"] = dict()
 
 	# Set initial state for move_list etc
 	def function_to_clear_move_list():

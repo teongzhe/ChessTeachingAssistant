@@ -55,6 +55,7 @@ class ActionPanel:
 		# Quick save and quick load
 		def quicksave():
 			settings.state["quick_save_position"] = copy.deepcopy(settings.state["position"])
+			settings.state["saved_caption"] = settings.state["text_panel"].get()
 		tkinter.Button(main_frame, text="Quick save", command=quicksave, width=BUTTON_WIDTH).pack(anchor="w")
 
 		def quickload():
@@ -63,6 +64,9 @@ class ActionPanel:
 				self.chessboard.add_piece_to_board(coordinate, piece)
 			settings.state["clear_move_list"]()
 			settings.state["highlight_active_square"](0)
+
+			settings.state["text_panel"].delete(0, tkinter.END)
+			settings.state["text_panel"].insert(0, settings.state["saved_caption"])
 		tkinter.Button(main_frame, text="Quick load", command=quickload, width=BUTTON_WIDTH).pack(anchor="w")
 
 		# Save to file
@@ -103,7 +107,7 @@ class ActionPanel:
 				# Find out what type of chess it is
 				chess_type = "CHESS"
 				for piece in chess_piece_types:
-					if piece not in settings.parameters["CHESS"]["TYPES_OF_CHESS_PIECES"]:
+					if chess_type == "CHESS" and piece not in settings.parameters[chess_type]["TYPES_OF_CHESS_PIECES"]:
 						chess_type = "XIANGQI"
 				
 				# Change chess type if neccessary
