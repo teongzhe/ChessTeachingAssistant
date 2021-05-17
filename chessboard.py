@@ -337,6 +337,10 @@ class ChessBoard:
 				for castle_type in move.disabled_castling:
 					settings.state["CHESS"]["CASTLE"][castle_type] = True
 
+				self.remove_highlights()
+				self.add_highlight(move.start_pos)
+				self.add_highlight(move.end_pos)
+
 			if move.start_piece == "white_king" and move.start_pos == (4,7):
 				if move.end_pos == (6,7):
 					self.remove_piece_from_board((5,7))
@@ -356,9 +360,6 @@ class ChessBoard:
 			else:
 				take_back_normally(move)
 			
-			# Highlight square
-			self.add_highlight(move.start_pos)
-
 			# Update state
 			settings.state["current_move_index"] -= 1
 			index = settings.state["current_move_index"]
@@ -378,6 +379,11 @@ class ChessBoard:
 				self.add_piece_to_board(move.end_pos, move.end_piece)
 				for castle_type in move.disabled_castling:
 					settings.state["CHESS"]["CASTLE"][castle_type] = False
+
+				# Highlight active squares
+				self.remove_highlights()
+				self.add_highlight(move.start_pos)
+				self.add_highlight(move.end_pos)
 			
 			if move.start_piece == "white_king" and move.start_pos == (4,7):
 				if move.end_pos == (6,7):
@@ -398,9 +404,6 @@ class ChessBoard:
 			else:
 				forward_normally(move)
 			
-			# Highlight square
-			self.add_highlight(move.start_pos)
-
 			# Update state
 			settings.state["current_move_index"] += 1
 			index = settings.state["current_move_index"]
