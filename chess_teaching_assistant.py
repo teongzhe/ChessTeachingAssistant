@@ -19,7 +19,7 @@ class MainWindow:
 		self.chessboard = chessboard.ChessBoard(tkinter.Canvas(root, bg="white"))
 
 		# Menu for Chess Pieces
-		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard)
+		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard, 0.1 * root.winfo_screenheight())
 
 		# Action panel
 		self.actionPanel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard)

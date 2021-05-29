@@ -4,9 +4,9 @@ from PIL import Image, ImageTk
 import settings
 
 class ChessPieces:
-	def __init__(self, frame, chessboard):
+	def __init__(self, frame, chessboard, imageSize = 70):
 		self.frame = frame
-		self.__radiobtnSize = 75
+		self.__radiobtnSize = imageSize
 		self.initialize_menu()
 
 	def initialize_menu(self):
@@ -32,7 +32,6 @@ class ChessPieces:
 				settings.state["selected_piece_to_add_to_board"] = var.get()
 				settings.state["game_is_ongoing"] = True if var.get() == "deselect" else False
 		
-		radiobtn_size = 65
 		for piece in pieces:
 			temp_frame = tkinter.Frame(self.frame)
 			temp_frame.pack(anchor="w")
