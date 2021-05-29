@@ -1,3 +1,4 @@
+# Chess Teaching Assistant
 This software is developed as an aid for (passionate) chess teachers.
 The idea originated from Chua Thean Cheang, with a request for a piece of software which enabled the user to freely specify the position of pieces on the chess board to enable education of how to handle specific situations.
 Functions that are currently implemented include:
@@ -9,11 +10,14 @@ Functions that are currently implemented include:
 
 
 
-
+## Running the application
 The main function is located in "chess_teaching_assistant.py".
 The program can be started by running "python3 chess_teaching_assistant.py" in the console.
-Note that the program is tested in python3. It may be necessary to change some import filenames when running using python2.
+Note that the program is tested in python3.9. It may be necessary to change some import filenames when running using python2.
 
-As this project was developed in a rush, many functions vital for debugging (mainly the throwing and catching of exceptions) are left out. Bugs are currently only fixed when a bug report is filed directly to me.
 
-Furthermore, development was not carried out with scalability in mind. Instead, a waterfall approach is used, as opposed to scrum which is fairly popular nowadays, for the reason that there is not much time to organize the code for scalability and a working edition is required in as short a time period as possible. However, I plan to refactor the code for scalability in the future, either in my free time or when there are requests to add new functionalities to the existing code.
+
+## A few notes regarding development
+As this project was developed in a rush, many functions vital for debugging (mainly the throwing and catching of exceptions) are left out. Bugs are currently only fixed when a bug report is filed directly.
+
+Furthermore, development was not carried out with scalability in mind. However, I plan to refactor the code for scalability in the future, either in my free time or when there are requests to add new functionalities to the existing code.
