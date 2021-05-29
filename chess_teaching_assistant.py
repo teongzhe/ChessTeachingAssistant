@@ -19,30 +19,32 @@ class MainWindow:
 		self.chessboard = chessboard.ChessBoard(tkinter.Canvas(root, bg="white", width=settings.parameters["CHESSBOARD_CANVAS_SIZE"], height=settings.parameters["CHESSBOARD_CANVAS_SIZE"]))
 
 		# Menu for Chess Pieces
-		self.chess_pieces_menu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard)
+		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard)
 
 		# Action panel
-		self.action_panel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chess_pieces_menu, self.chessboard)
+		self.actionPanel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard)
 
 		# Text panel
-		self.text_panel = tkinter.Entry(root, width=20, font=(False,36), justify=tkinter.CENTER)
-		settings.state["text_panel"] = self.text_panel
+		self.textPanel = tkinter.Entry(root, width=20, font=(False,36), justify=tkinter.CENTER)
+		settings.state["text_panel"] = self.textPanel
 
 		def focus_root(event):
 			root.focus_set()
-		self.text_panel.bind("<Return>", focus_root)
+		self.textPanel.bind("<Return>", focus_root)
+
 
 
 		# Arrange everything
-		self.text_panel.pack(side=tkinter.TOP)
-		self.chess_pieces_menu.frame.pack(side=tkinter.LEFT)
-		self.chessboard.canvas.pack(side=tkinter.LEFT)
-		self.action_panel.frame.pack(side=tkinter.LEFT)
+		self.textPanel.pack(side=tkinter.TOP)
+		self.chesspiecesMenu.frame.pack(side=tkinter.LEFT)
+		self.actionPanel.frame.pack(side=tkinter.RIGHT)
+		self.chessboard.canvas.pack(side=tkinter.BOTTOM)
 
 
 
 if __name__ == "__main__":
 	root = tkinter.Tk()
+	root.state("zoomed")
 	settings.init(root)
 	MainWindow = MainWindow()
 	settings.root.mainloop()
