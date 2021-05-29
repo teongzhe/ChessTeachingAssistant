@@ -225,7 +225,7 @@ class Moves:
 			if 3 <= coordinate[0] <= 5 and coordinate[1] > 6 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_shi":
-			if coordinate[0] > 2 and coordinate[0] < 3 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 1:
+			if 3 <= coordinate[0] <= 5 and coordinate[1] < 3 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 1:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		
 		# Xiang
