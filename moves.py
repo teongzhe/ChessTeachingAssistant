@@ -17,9 +17,14 @@ class Moves:
 
 		self.disabled_castling = list()
 
+	def __str__(self):
+		endPosString, pieceTakenString = "", ""
+		if self.end_pos != 0:
+			endPosString = " to ({},{})".format(self.end_pos[0], self.end_pos[1])
+			if self.piece_taken != "":
+				pieceTakenString = " taking {} at ({},{})".format(self.piece_taken, self.piece_taken_pos[0], self.piece_taken_pos[1])
+		return "{} from ({},{}){}{}".format(self.start_piece, self.start_pos[0], self.start_pos[1], endPosString, pieceTakenString)
 
-	def details(self):
-		print(self.player_color, self.start_piece, "from", self.start_pos, "to", self.end_pos, "taking", self.piece_taken)
 
 
 	def update(self, state, coordinate):
