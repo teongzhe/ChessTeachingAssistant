@@ -1,7 +1,3 @@
-import tkinter
-from tkinter import messagebox
-from PIL import Image, ImageTk
-
 import moves
 
 def init(master):
@@ -14,61 +10,16 @@ def init(master):
 	global parameters
 	parameters = dict()
 
-	# Commonly used measurements
-	parameters["CHESSBOARD_CANVAS_SIZE"] = 700
-	parameters["BOARD_MARGIN"] = int(0.05 * parameters["CHESSBOARD_CANVAS_SIZE"])
-	parameters["BOARD_SIZE"] = int(0.9 * parameters["CHESSBOARD_CANVAS_SIZE"])
-
-	# Highlight parameters
-	parameters["CHESS"] = dict()
-	parameters["CHESS"]["HIGHLIGHT_LINEWIDTH"] = 7
-	parameters["CHESS"]["HIGHLIGHT_COLOR"] = "red"
-
-	parameters["XIANGQI"] = dict()
-	parameters["XIANGQI"]["HIGHLIGHT_LINEWIDTH"] = 4
-	parameters["XIANGQI"]["HIGHLIGHT_COLOR"] = "blue"
 
 	# Chess
-	parameters["CHESS"]["IMG"] = dict()
+	parameters["CHESS"] = dict()
 	parameters["CHESS"]["PLAYER_COLORS"] = ("white","black")
 	parameters["CHESS"]["TYPES_OF_CHESS_PIECES"] = ("king","queen","rook","knight","bishop","pawn")
 
-	parameters["CHESS"]["CHESSBOARD_X_ARRAY"] = 8
-	parameters["CHESS"]["CHESSBOARD_Y_ARRAY"] = 8
-	parameters["CHESS"]["CELL_SIZE"] = parameters["BOARD_SIZE"] / 8
-	parameters["CHESS"]["TEXT_MARGIN"] = 10
-	parameters["CHESS"]["PIECE_SIZE"] = int(0.8 * parameters["CHESS"]["CELL_SIZE"])
-
-	parameters["CHESS"]["BOARD_X_START"] = parameters["BOARD_MARGIN"]
-	parameters["CHESS"]["BOARD_X_END"] = parameters["BOARD_MARGIN"] + parameters["BOARD_SIZE"]
-	parameters["CHESS"]["BOARD_Y_START"] = parameters["BOARD_MARGIN"]
-	parameters["CHESS"]["BOARD_Y_END"] = parameters["BOARD_MARGIN"] + parameters["BOARD_SIZE"]
-
-	parameters["CHESS"]["CENTER"] = dict()
-	for i in range(parameters["CHESS"]["CHESSBOARD_X_ARRAY"]):
-		for j in range(parameters["CHESS"]["CHESSBOARD_Y_ARRAY"]):
-			parameters["CHESS"]["CENTER"][(i,j)] = ((i+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"], (j+0.5)*parameters["CHESS"]["CELL_SIZE"] + parameters["BOARD_MARGIN"])
-
 	# Xiangqi
-	parameters["XIANGQI"]["IMG"] = dict()
+	parameters["XIANGQI"] = dict()
 	parameters["XIANGQI"]["PLAYER_COLORS"] = ("red","black")
 	parameters["XIANGQI"]["TYPES_OF_CHESS_PIECES"] = ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing")
-
-	parameters["XIANGQI"]["CHESSBOARD_X_ARRAY"] = 9
-	parameters["XIANGQI"]["CHESSBOARD_Y_ARRAY"] = 10
-	parameters["XIANGQI"]["CELL_SIZE"] = parameters["BOARD_SIZE"] / 10
-	parameters["XIANGQI"]["TEXT_MARGIN"] = 15
-	parameters["XIANGQI"]["PIECE_SIZE"] = int(parameters["XIANGQI"]["CELL_SIZE"])
-
-	parameters["XIANGQI"]["BOARD_X_START"] = parameters["BOARD_MARGIN"] + parameters["XIANGQI"]["CELL_SIZE"] - 0.5*parameters["XIANGQI"]["PIECE_SIZE"]
-	parameters["XIANGQI"]["BOARD_X_END"] = parameters["BOARD_MARGIN"] + parameters["BOARD_SIZE"] - parameters["XIANGQI"]["CELL_SIZE"] + 0.5*parameters["XIANGQI"]["PIECE_SIZE"]
-	parameters["XIANGQI"]["BOARD_Y_START"] = parameters["BOARD_MARGIN"] + 0.5*parameters["XIANGQI"]["CELL_SIZE"] - 0.5*parameters["XIANGQI"]["PIECE_SIZE"]
-	parameters["XIANGQI"]["BOARD_Y_END"] = parameters["BOARD_MARGIN"] + parameters["BOARD_SIZE"] - 0.5*parameters["XIANGQI"]["CELL_SIZE"] + 0.5*parameters["XIANGQI"]["PIECE_SIZE"]
-
-	parameters["XIANGQI"]["CENTER"] = dict()
-	for i in range(parameters["XIANGQI"]["CHESSBOARD_X_ARRAY"]):
-		for j in range(parameters["XIANGQI"]["CHESSBOARD_Y_ARRAY"]):
-			parameters["XIANGQI"]["CENTER"][(i,j)] = ((i+1)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"], (j+0.5)*parameters["XIANGQI"]["CELL_SIZE"] + parameters["BOARD_MARGIN"])
 
 
 
@@ -111,29 +62,3 @@ def init(master):
 					castle["black_long"] = True
 
 	state["clear_move_list"] = function_to_clear_move_list
-
-	###########################################################
-	###			Read images for chess pieces				###
-	###########################################################
-	def process_png(chess_piece, img_size):
-		try:
-			img = Image.open("img/" + chess_piece + ".png")
-
-			# Scale image
-			longer_side = img.size[0] if img.size[0] > img.size[1] else img.size[1]
-			scaling_factor = img_size / longer_side
-			scaled_size = (int(scaling_factor*img.size[0]), int(scaling_factor*img.size[1]))
-			img = img.resize(scaled_size)
-
-			return ImageTk.PhotoImage(img)
-		except FileNotFoundError as e:
-			print(e)
-			messagebox.showerror("Error", e)
-			exit(1)
-
-
-	for chess_type in ("CHESS", "XIANGQI"):
-		for color in parameters[chess_type]["PLAYER_COLORS"]:
-			for piece in parameters[chess_type]["TYPES_OF_CHESS_PIECES"]:
-				chess_piece = color + "_" + piece
-				parameters[chess_type]["IMG"][chess_piece] = process_png(chess_piece, parameters[chess_type]["PIECE_SIZE"])

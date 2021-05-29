@@ -16,7 +16,7 @@ class MainWindow:
 		###					Organize panels						###
 		###########################################################
 		# Chessboard
-		self.chessboard = chessboard.ChessBoard(tkinter.Canvas(root, bg="white", width=settings.parameters["CHESSBOARD_CANVAS_SIZE"], height=settings.parameters["CHESSBOARD_CANVAS_SIZE"]))
+		self.chessboard = chessboard.ChessBoard(tkinter.Canvas(root, bg="white"))
 
 		# Menu for Chess Pieces
 		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard)
@@ -39,6 +39,14 @@ class MainWindow:
 		self.chesspiecesMenu.frame.pack(side=tkinter.LEFT)
 		self.actionPanel.frame.pack(side=tkinter.RIGHT)
 		self.chessboard.canvas.pack(side=tkinter.BOTTOM)
+
+
+
+		# Resize chessboard to maximize screen usage
+		root.update()
+		maxPossibleWidth = root.winfo_width() - self.chesspiecesMenu.frame.winfo_width() - self.actionPanel.frame.winfo_width()
+		maxPossibleHeight = root.winfo_height() - self.textPanel.winfo_height()
+		self.chessboard.resize_canvas(min((maxPossibleWidth, maxPossibleHeight)))
 
 
 
