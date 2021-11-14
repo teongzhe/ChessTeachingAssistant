@@ -15,11 +15,15 @@ def init(master):
 	parameters["CHESS"] = dict()
 	parameters["CHESS"]["PLAYER_COLORS"] = ("white","black")
 	parameters["CHESS"]["TYPES_OF_CHESS_PIECES"] = ("king","queen","rook","knight","bishop","pawn")
+	parameters["CHESS"]["CHESSBOARD_X_ARRAY"] = 8
+	parameters["CHESS"]["CHESSBOARD_Y_ARRAY"] = 8
 
 	# Xiangqi
 	parameters["XIANGQI"] = dict()
 	parameters["XIANGQI"]["PLAYER_COLORS"] = ("red","black")
 	parameters["XIANGQI"]["TYPES_OF_CHESS_PIECES"] = ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing")
+	parameters["XIANGQI"]["CHESSBOARD_X_ARRAY"] = 9
+	parameters["XIANGQI"]["CHESSBOARD_Y_ARRAY"] = 10
 
 
 
