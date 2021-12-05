@@ -1,6 +1,7 @@
 import tkinter
 
 import settings
+import ImgProcessor
 
 class Moves:
 	def __init__(self):
@@ -196,12 +197,14 @@ class Moves:
 					self.piece_to_promote_to = chosen_piece
 					self.promotion_window.destroy()
 
-				for piece in settings.parameters["CHESS"]["TYPES_OF_CHESS_PIECES"]:
+				for piece in settings.parameters["Chess"]["TypesOfChessPieces"]:
 					if piece != "king" and piece != "pawn":
-						chess_piece = color + "_" + piece
-						img = settings.parameters["CHESS"]["IMG"][chess_piece]
-						img_size = settings.parameters["CHESS"]["PIECE_SIZE"]
-						tkinter.Button(self.promotion_window, image=img, command=lambda s=chess_piece:callback(s), width=img_size, height=img_size).pack(side=tkinter.LEFT)
+						ChessPiece = color + "_" + piece
+						ButtonSize = settings.parameters["CellSize"]["Chess"]
+						img = ImgProcessor.GetPhotoImage("Chess", ChessPiece)
+						bt = tkinter.Button(self.promotion_window, image = img, command = lambda s = ChessPiece : callback(s), width = ButtonSize, height = ButtonSize)
+						bt.image = img
+						bt.pack(side = tkinter.LEFT)
 				
 				master.wait_window(self.promotion_window)
 

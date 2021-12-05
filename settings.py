@@ -1,4 +1,20 @@
 import moves
+import ImgProcessor
+
+
+def InitializeDimensions():
+	parameters["CanvasSize"] = 700
+	parameters["BoardMargin"] = 0.05 * parameters["CanvasSize"]
+	parameters["BoardSize"] = 0.9 * parameters["CanvasSize"]
+
+	parameters["CellSize"] = dict()
+	for ChessType in parameters["TypesOfChess"]:
+		parameters["CellSize"][ChessType] = parameters["BoardSize"] / max(parameters[ChessType]["ChessboardXArray"], parameters[ChessType]["ChessboardYArray"])
+	
+	parameters["PieceSize"] = dict()
+	parameters["PieceSize"]["Chess"] = 0.8 * parameters["CellSize"]["Chess"]
+	parameters["PieceSize"]["XiangQi"] = 0.98 * parameters["CellSize"]["XiangQi"]
+
 
 def init(master):
 	global root
@@ -9,6 +25,28 @@ def init(master):
 	###########################################################
 	global parameters
 	parameters = dict()
+
+	
+
+	# types of chess available
+	parameters["TypesOfChess"] = ("Chess", "XiangQi")
+	for ChessType in parameters["TypesOfChess"]:
+		parameters[ChessType] = dict()
+	
+	# Chess
+	parameters["Chess"]["PlayerColors"] = ("white", "black")
+	parameters["Chess"]["TypesOfChessPieces"] = ("king", "queen", "rook", "knight", "bishop", "pawn")
+	parameters["Chess"]["ChessboardXArray"] = 8
+	parameters["Chess"]["ChessboardYArray"] = 8
+
+	# XiangQi
+	parameters["XiangQi"]["PlayerColors"] = ("red", "black")
+	parameters["XiangQi"]["TypesOfChessPieces"] = ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing")
+	parameters["XiangQi"]["ChessboardXArray"] = 9
+	parameters["XiangQi"]["ChessboardYArray"] = 10
+
+	InitializeDimensions()
+	ImgProcessor.InitChessPieceImages()
 
 
 	# Chess
