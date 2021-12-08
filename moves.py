@@ -1,7 +1,7 @@
 import tkinter
 
 import settings
-import ImgProcessor
+from ImgProcessor import *
 
 class Moves:
 	def __init__(self):
@@ -48,9 +48,9 @@ class Moves:
 				self.start_piece = selected_piece
 				self.start_pos = coordinate
 			else:
-				if settings.state["chess_type"] == "CHESS":
+				if settings.state["chess_type"] == "Chess":
 					self.chess_move_checker(selected_piece, coordinate)
-				elif settings.state["chess_type"] == "XIANGQI":
+				elif settings.state["chess_type"] == "XiangQi":
 					self.xiangqi_move_checker(selected_piece, coordinate)
 					
 	def record_end_piece_and_pos(self, selected_piece, coordinate):
@@ -201,7 +201,7 @@ class Moves:
 					if piece != "king" and piece != "pawn":
 						ChessPiece = color + "_" + piece
 						ButtonSize = settings.parameters["CellSize"]["Chess"]
-						img = ImgProcessor.GetPhotoImage("Chess", ChessPiece)
+						img = ImgProcessor().GetPhotoImage("Chess", ChessPiece)
 						bt = tkinter.Button(self.promotion_window, image = img, command = lambda s = ChessPiece : callback(s), width = ButtonSize, height = ButtonSize)
 						bt.image = img
 						bt.pack(side = tkinter.LEFT)

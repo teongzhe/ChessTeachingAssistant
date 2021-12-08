@@ -1,5 +1,4 @@
 import moves
-import ImgProcessor
 
 
 def InitializeDimensions():
@@ -46,7 +45,7 @@ def init(master):
 	parameters["XiangQi"]["ChessboardYArray"] = 10
 
 	InitializeDimensions()
-	ImgProcessor.InitChessPieceImages()
+	# ImgProcessor.InitChessPieceImages()
 
 
 	# Chess
@@ -71,7 +70,7 @@ def init(master):
 	global state
 	state = dict()
 
-	state["chess_type"] = "CHESS"
+	state["chess_type"] = "Chess"
 	state["position"] = dict()
 
 	state["saved_caption"] = ""
@@ -88,7 +87,7 @@ def init(master):
 		state["current_move"] = moves.Moves()
 		state["current_move_index"] = -1
 
-		if state["chess_type"] == "CHESS":
+		if state["chess_type"] == "Chess":
 			state["CHESS"]["CASTLE"] = {"white_short":False, "white_long":False, "black_short":False, "black_long":False}
 			castle = state["CHESS"]["CASTLE"]
 			

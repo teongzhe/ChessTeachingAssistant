@@ -2,6 +2,7 @@ import tkinter
 from PIL import Image, ImageTk
 
 import settings
+from ImgProcessor import *
 
 class ChessPieces:
 	def __init__(self, frame, chessboard, imageSize = 70):
@@ -17,8 +18,9 @@ class ChessPieces:
 
 
 	def add_menu(self):
-		colors = settings.parameters[settings.state["chess_type"]]["PLAYER_COLORS"]
-		pieces = settings.parameters[settings.state["chess_type"]]["TYPES_OF_CHESS_PIECES"]
+		ChessType = settings.state["chess_type"]
+		colors = settings.parameters[ChessType]["PlayerColors"]
+		pieces = settings.parameters[ChessType]["TypesOfChessPieces"]
 		
 		settings.state["game_is_ongoing"] = True
 		settings.state["selected_piece_to_add_to_board"] = "deselect"
@@ -36,14 +38,14 @@ class ChessPieces:
 			temp_frame = tkinter.Frame(self.frame)
 			temp_frame.pack(anchor="w")
 			for color in colors:
-				temp_str = color + "_" + piece
-				img = settings.parameters[settings.state["chess_type"]]["IMG"][temp_str]
+				ChessPiece = color + "_" + piece
+				img = ImgProcessor().GetImage(ChessType, ChessPiece)
 				longer_side = img.size[0] if img.size[0] > img.size[1] else img.size[1]
 				scalingFactor = self.__radiobtnSize / longer_side
 				scaled_size = (int(scalingFactor*img.size[0]), int(scalingFactor*img.size[1]))
 				img = ImageTk.PhotoImage(img.resize(scaled_size))
-
-				radiobtn = tkinter.Radiobutton(temp_frame, command=callback, variable=var, value=temp_str, image=img, indicatoron=0, width=self.__radiobtnSize, height=self.__radiobtnSize)
+				
+				radiobtn = tkinter.Radiobutton(temp_frame, command=callback, variable=var, value=ChessPiece, image=img, indicatoron=0, width=self.__radiobtnSize, height=self.__radiobtnSize)
 				radiobtn.image = img
 				radiobtn.pack(side=tkinter.LEFT)
 

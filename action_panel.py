@@ -21,13 +21,16 @@ class ActionPanel:
 		tkinter.Label(labelFrame, text="What would you like to play today?").pack(side=tkinter.TOP)
 
 		# Callback function and variable
-		self.chess_type_var = tkinter.StringVar(value="CHESS")
+		self.chess_type_var = tkinter.StringVar(value="Chess")
 		def callback():
 			if settings.state["chess_type"] != self.chess_type_var.get():
 				self.change_chess_type(self.chess_type_var.get())
 			
-		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="CHESS", text="Chess").pack(anchor="w")
-		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="XIANGQI", text="Xiang Qi").pack(anchor="w")
+		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="Chess", text="Chess").pack(anchor="w")
+		tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="XiangQi", text="Xiang Qi").pack(anchor="w")
+
+		# tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="CHESS", text="Chess").pack(anchor="w")
+		# tkinter.Radiobutton(self.frame, command=callback, variable=self.chess_type_var, value="XIANGQI", text="Xiang Qi").pack(anchor="w")
 	
 	def change_chess_type(self, target_type):
 		settings.state["chess_type"] = target_type

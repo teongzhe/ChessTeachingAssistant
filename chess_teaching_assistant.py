@@ -3,6 +3,7 @@ import tkinter.font
 
 import settings
 import action_panel, chessboard, chesspieces, moves
+from ImgProcessor import *
 
 class MainWindow:
 	def __init__(self):
@@ -53,6 +54,10 @@ class MainWindow:
 if __name__ == "__main__":
 	root = tkinter.Tk()
 	root.state("zoomed")
+
+	# Initialize
 	settings.init(root)
+	ImgProcessor()
+
 	MainWindow = MainWindow()
 	settings.root.mainloop()
