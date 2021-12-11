@@ -1,10 +1,6 @@
-import tkinter
-from tkinter import messagebox
-from PIL import Image, ImageTk
-
 import settings
+from settings import Parameters, State
 from ImgProcessor import *
-import moves
 
 class ChessBoard:
 	def __init__(self, canvas):
@@ -16,7 +12,6 @@ class ChessBoard:
 
 		# Prepare to highlight active square
 		self.active_square_objects = list()
-		settings.state["remove_highlights"] = self.remove_highlights
 
 		# Setup canvas parameters
 		self.setup_canvas_param()
@@ -26,7 +21,6 @@ class ChessBoard:
 
 		# Bind mouse left click
 		self.canvas.bind("<Button-1>", self.lmb_callback)
-
 	
 	def setup_canvas_param(self, canvasSize = 700):
 		# Set commonly used measurements
@@ -78,9 +72,9 @@ class ChessBoard:
 			self.canvas.delete(object)
 
 		# Call functions to draw the chess board
-		if settings.state["chess_type"] == "Chess":
+		if State().GetChessType() == "Chess":
 			self.draw_chess_board()
-		elif settings.state["chess_type"] == "XiangQi":
+		elif State().GetChessType() == "XiangQi":
 			self.draw_xiangqi_board()
 
 		self.starting_positions()
@@ -88,7 +82,7 @@ class ChessBoard:
 	def resize_canvas(self, canvasSize):
 		# Save position of current pieces
 		currentPositions = dict()
-		for coordinate, piece in settings.state["position"].items():
+		for coordinate, piece in State().GetChessPiecePositions().items():
 			currentPositions[coordinate] = piece
 
 		# Recalculate parameters
@@ -100,9 +94,9 @@ class ChessBoard:
 			self.canvas.delete(object)
 		
 		# Call functions to draw the chess board
-		if settings.state["chess_type"] == "Chess":
+		if State().GetChessType() == "Chess":
 			self.draw_chess_board()
-		elif settings.state["chess_type"] == "XiangQi":
+		elif State().GetChessType() == "XiangQi":
 			self.draw_xiangqi_board()
 		
 		# Add pieces to board
@@ -117,10 +111,10 @@ class ChessBoard:
 	def add_highlight(self, square):
 		# Highlight active square
 		if square != 0:
-			linewidth = self.__highlightLinewidth[settings.state["chess_type"]]
-			color = self.__highlightColor[settings.state["chess_type"]]
-			x,y = self.__center[settings.state["chess_type"]][square]
-			size = 0.5 * self.__cellSize[settings.state["chess_type"]]
+			linewidth = self.__highlightLinewidth[State().GetChessType()]
+			color = self.__highlightColor[State().GetChessType()]
+			x,y = self.__center[State().GetChessType()][square]
+			size = 0.5 * self.__cellSize[State().GetChessType()]
 			length = 0.6 * size
 			offset = 0.1 * linewidth
 
@@ -230,28 +224,28 @@ class ChessBoard:
 
 
 	def lmb_callback(self, event):
-		CELL_SIZE = self.__cellSize[settings.state["chess_type"]]
-		BOARD_X_START, BOARD_X_END = self.__boardXLimits[settings.state["chess_type"]]
-		BOARD_Y_START, BOARD_Y_END = self.__boardYLimits[settings.state["chess_type"]]
+		ChessType = State().GetChessType()
+		CellSize = Parameters().GetCellSize(ChessType)
+		BOARD_X_START, BOARD_X_END = self.__boardXLimits[ChessType]
+		BOARD_Y_START, BOARD_Y_END = self.__boardYLimits[ChessType]
 
 		# Handle events within the chessboard
 		if BOARD_X_START < event.x < BOARD_X_END and BOARD_Y_START < event.y < BOARD_Y_END:
-			x = int((event.x - BOARD_X_START) / CELL_SIZE)
-			y = int((event.y - BOARD_Y_START) / CELL_SIZE)
+			x = int((event.x - BOARD_X_START) / CellSize)
+			y = int((event.y - BOARD_Y_START) / CellSize)
 
 			# Check if x,y are allowed values
 			if x < 0: x = 0
-			if x >= self.__xArray[settings.state["chess_type"]]:
-				x = self.__xArray[settings.state["chess_type"]] - 1
+			if x >= self.__xArray[ChessType]:
+				x = self.__xArray[ChessType] - 1
 
 			if y < 0: y = 0
-			if y >= self.__yArray[settings.state["chess_type"]]:
-				y = self.__yArray[settings.state["chess_type"]] - 1
+			if y >= self.__yArray[ChessType]:
+				y = self.__yArray[ChessType] - 1
 			
 			coordinate = (x,y)
 
-			# Check if game is ongoing
-			if settings.state["game_is_ongoing"]:
+			if State().IsGameOngoing():
 				self.move_piece(coordinate)
 			else:
 				self.change_piece_on_board(coordinate)
@@ -266,29 +260,28 @@ class ChessBoard:
 			self.add_piece_to_board(coordinate, settings.state["selected_piece_to_add_to_board"])
 
 	def remove_piece_from_board(self, coordinate):
-		if coordinate in settings.state["position"]:
+		if coordinate in State().GetChessPiecePositions():
 			self.canvas.delete(self.chesspiecesObjects[coordinate][0])
 			self.chesspiecesObjects.pop(coordinate)
-			settings.state["position"].pop(coordinate)
+			State().RemoveChessPieceFromPosition(coordinate)
 	
 	def add_piece_to_board(self, coordinate, ChessPiece):
-		settings.state["position"][coordinate] = ChessPiece
-		ChessType = settings.state["chess_type"]
+		State().AddChessPieceToPosition(ChessPiece, coordinate)
+		ChessType = State().GetChessType()
 		img = ImgProcessor().GetPhotoImage(ChessType, ChessPiece)
 		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(self.__center[ChessType][coordinate], image=img), img]
 
 	def clear_pieces_from_board(self):
-		for coordinate in settings.state["position"]:
+		for coordinate in State().GetChessPiecePositions():
 			self.canvas.delete(self.chesspiecesObjects[coordinate][0])
 			self.chesspiecesObjects.pop(coordinate)
-		settings.state["position"] = dict()
-
-		settings.state["clear_move_list"]()
-		settings.state["remove_highlights"]()
+		State().ClearChessPiecePositions()
+		State().ClearMoveList()
+		self.remove_highlights()
 
 	def move_piece(self, coordinate):
-		current_move = settings.state["current_move"]
-		current_move.update(settings.state, coordinate)
+		CurrentMove = State().GetCurrentMove()
+		CurrentMove.update(settings.state, coordinate)
 
 		# Execute move
 		def move_normally(move):
@@ -297,86 +290,80 @@ class ChessBoard:
 				self.remove_piece_from_board(move.piece_taken_pos)
 			self.add_piece_to_board(move.end_pos, move.end_piece)
 
-		if current_move.start_pos != 0 and current_move.end_pos != 0:
+		if CurrentMove.start_pos != 0 and CurrentMove.end_pos != 0:
 			# Move king (including castling)
-			if current_move.start_piece == "white_king":
+			if CurrentMove.start_piece == "white_king":
 				# Update castling states
 				for castle_type in ("white_short", "white_long"):
 					if settings.state["Chess"]["CASTLE"][castle_type]:
-						current_move.disabled_castling.append(castle_type)
+						CurrentMove.disabled_castling.append(castle_type)
 						settings.state["Chess"]["CASTLE"][castle_type] = False
 
-				if current_move.start_pos == (4,7) and current_move.end_pos == (6,7):
-					self.remove_piece_from_board(current_move.start_pos)
-					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+				if CurrentMove.start_pos == (4,7) and CurrentMove.end_pos == (6,7):
+					self.remove_piece_from_board(CurrentMove.start_pos)
+					self.add_piece_to_board(CurrentMove.end_pos, CurrentMove.end_piece)
 					self.remove_piece_from_board((7,7))
 					self.add_piece_to_board((5,7), "white_rook")
-				elif current_move.start_pos == (4,7) and current_move.end_pos == (2,7):
-					self.remove_piece_from_board(current_move.start_pos)
-					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+				elif CurrentMove.start_pos == (4,7) and CurrentMove.end_pos == (2,7):
+					self.remove_piece_from_board(CurrentMove.start_pos)
+					self.add_piece_to_board(CurrentMove.end_pos, CurrentMove.end_piece)
 					self.remove_piece_from_board((0,7))
 					self.add_piece_to_board((3,7), "white_rook")
 				else:
-					move_normally(current_move)
-			elif current_move.start_piece == "black_king":
+					move_normally(CurrentMove)
+			elif CurrentMove.start_piece == "black_king":
 				for castle_type in ("black_short", "black_long"):
 					if settings.state["Chess"]["CASTLE"][castle_type]:
-						current_move.disabled_castling.append(castle_type)
+						CurrentMove.disabled_castling.append(castle_type)
 						settings.state["Chess"]["CASTLE"][castle_type] = False
 
-				if current_move.start_pos == (4,0) and current_move.end_pos == (6,0):
-					self.remove_piece_from_board(current_move.start_pos)
-					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+				if CurrentMove.start_pos == (4,0) and CurrentMove.end_pos == (6,0):
+					self.remove_piece_from_board(CurrentMove.start_pos)
+					self.add_piece_to_board(CurrentMove.end_pos, CurrentMove.end_piece)
 					self.remove_piece_from_board((7,0))
 					self.add_piece_to_board((5,0), "black_rook")
-				elif current_move.start_pos == (4,0) and current_move.end_pos == (2,0):
-					self.remove_piece_from_board(current_move.start_pos)
-					self.add_piece_to_board(current_move.end_pos, current_move.end_piece)
+				elif CurrentMove.start_pos == (4,0) and CurrentMove.end_pos == (2,0):
+					self.remove_piece_from_board(CurrentMove.start_pos)
+					self.add_piece_to_board(CurrentMove.end_pos, CurrentMove.end_piece)
 					self.remove_piece_from_board((0,0))
 					self.add_piece_to_board((3,0), "black_rook")
 				else:
-					move_normally(current_move)
-			elif current_move.start_piece == "white_rook" and current_move.start_pos == (7,7) and settings.state["Chess"]["CASTLE"]["white_short"]:
+					move_normally(CurrentMove)
+			elif CurrentMove.start_piece == "white_rook" and CurrentMove.start_pos == (7,7) and settings.state["Chess"]["CASTLE"]["white_short"]:
 				settings.state["Chess"]["CASTLE"]["white_short"] = False
-				current_move.disabled_castling.append("white_short")
-				move_normally(current_move)
-			elif current_move.start_piece == "white_rook" and current_move.start_pos == (0,7) and settings.state["Chess"]["CASTLE"]["white_long"]:
+				CurrentMove.disabled_castling.append("white_short")
+				move_normally(CurrentMove)
+			elif CurrentMove.start_piece == "white_rook" and CurrentMove.start_pos == (0,7) and settings.state["Chess"]["CASTLE"]["white_long"]:
 				settings.state["Chess"]["CASTLE"]["white_long"] = False
-				current_move.disabled_castling.append("white_long")
-				move_normally(current_move)
-			elif current_move.start_piece == "black_rook" and current_move.start_pos == (7,0) and settings.state["Chess"]["CASTLE"]["black_short"]:
+				CurrentMove.disabled_castling.append("white_long")
+				move_normally(CurrentMove)
+			elif CurrentMove.start_piece == "black_rook" and CurrentMove.start_pos == (7,0) and settings.state["Chess"]["CASTLE"]["black_short"]:
 				settings.state["Chess"]["CASTLE"]["black_short"] = False
-				current_move.disabled_castling.append("black_short")
-				move_normally(current_move)
-			elif current_move.start_piece == "black_rook" and current_move.start_pos == (0,0) and settings.state["Chess"]["CASTLE"]["black_long"]:
+				CurrentMove.disabled_castling.append("black_short")
+				move_normally(CurrentMove)
+			elif CurrentMove.start_piece == "black_rook" and CurrentMove.start_pos == (0,0) and settings.state["Chess"]["CASTLE"]["black_long"]:
 				settings.state["Chess"]["CASTLE"]["black_long"] = False
-				current_move.disabled_castling.append("black_long")
-				move_normally(current_move)
+				CurrentMove.disabled_castling.append("black_long")
+				move_normally(CurrentMove)
 				
 			# Move pieces with no special moves
 			else:
-				move_normally(current_move)
+				move_normally(CurrentMove)
 			
-			# Record move
-			settings.state["current_move_index"] += 1
-			if (len(settings.state["move_list"]) > settings.state["current_move_index"]):
-				settings.state["move_list"] = settings.state["move_list"][:settings.state["current_move_index"]]
-			settings.state["move_list"].append(current_move)
-			settings.state["current_move"] = moves.Moves()
-			settings.state["previous_player"] = current_move.player_color
+			State().RecordMove(CurrentMove)
 		
 		# Highlight active squares
-		settings.state["remove_highlights"]()
-		self.add_highlight(current_move.start_pos)
-		self.add_highlight(current_move.end_pos)
+		self.remove_highlights()
+		self.add_highlight(CurrentMove.start_pos)
+		self.add_highlight(CurrentMove.end_pos)
 
 
 
 	def take_back(self):
 		# Get information
-		index = settings.state["current_move_index"]
+		index = State().GetCurrentMoveIndex()
 		if index >= 0:
-			move = settings.state["move_list"][index]
+			move = State().GetMoveList()[index]
 
 			# Reverse move
 			def take_back_normally(move):
@@ -465,7 +452,7 @@ class ChessBoard:
 		self.clear_pieces_from_board()
 
 		# Chess
-		if settings.state["chess_type"] == "Chess":
+		if State().GetChessType() == "Chess":
 			order = ("rook","knight","bishop","queen","king","bishop","knight","rook")
 			for i in range(len(order)):
 				# Add white pieces
@@ -476,7 +463,7 @@ class ChessBoard:
 				self.add_piece_to_board((i,0), "black_" + order[i])
 				self.add_piece_to_board((i,1), "black_pawn")
 		# Xiangqi
-		elif settings.state["chess_type"] == "XiangQi":
+		elif State().GetChessType() == "XiangQi":
 			# Add main pieces
 			order = ("ju","ma","xiang","shi","shuai","shi","xiang","ma","ju")
 			for i in range(len(order)):
@@ -493,5 +480,5 @@ class ChessBoard:
 				self.add_piece_to_board((i,6), "red_bing")
 				self.add_piece_to_board((i,3), "black_bing")
 		
-		settings.state["clear_move_list"]()
-		settings.state["remove_highlights"]()
+		State().ClearMoveList()
+		self.remove_highlights()

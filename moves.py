@@ -3,6 +3,7 @@ import tkinter
 import settings
 from ImgProcessor import *
 
+
 class Moves:
 	def __init__(self):
 		self.player_color = ""
@@ -31,14 +32,14 @@ class Moves:
 	def update(self, state, coordinate):
 		selected_piece = ""
 		player_color, piece = "", ""
-		if coordinate in state["position"]:
-			selected_piece = state["position"][coordinate]
+		if coordinate in settings.State().GetChessPiecePositions():
+			selected_piece = settings.State().GetChessPieceAtPosition(coordinate)
 			player_color, piece = selected_piece.split("_")
 		
 		if self.start_piece == "":
 			# Select chess piece at specified coordinate
 			if selected_piece != "":
-				if player_color != state["previous_player"]:
+				if player_color != settings.State().GetPreviousPlayer():
 					self.player_color = player_color
 					self.start_piece = selected_piece
 					self.start_pos = coordinate
@@ -48,9 +49,9 @@ class Moves:
 				self.start_piece = selected_piece
 				self.start_pos = coordinate
 			else:
-				if settings.state["chess_type"] == "Chess":
+				if settings.State().GetChessType() == "Chess":
 					self.chess_move_checker(selected_piece, coordinate)
-				elif settings.state["chess_type"] == "XiangQi":
+				elif settings.State().GetChessType() == "XiangQi":
 					self.xiangqi_move_checker(selected_piece, coordinate)
 					
 	def record_end_piece_and_pos(self, selected_piece, coordinate):
@@ -67,19 +68,19 @@ class Moves:
 	def chess_move_checker(self, selected_piece, coordinate):
 		# King
 		if self.start_piece == "white_king":
-			if settings.state["CHESS"]["CASTLE"]["white_short"] and coordinate == (6,7) and (5,7) not in settings.state["position"]:
+			if settings.state["CHESS"]["CASTLE"]["white_short"] and coordinate == (6,7) and (5,7) not in settings.State().GetChessPiecePositions():
 				self.end_piece = self.start_piece
 				self.end_pos = coordinate
-			elif settings.state["CHESS"]["CASTLE"]["white_long"] and coordinate == (2,7) and (1,7) not in settings.state["position"] and (3,7) not in settings.state["position"]:
+			elif settings.state["CHESS"]["CASTLE"]["white_long"] and coordinate == (2,7) and (1,7) not in settings.State().GetChessPiecePositions() and (3,7) not in settings.State().GetChessPiecePositions():
 				self.end_piece = self.start_piece
 				self.end_pos = coordinate
 			elif abs(self.start_pos[0] - coordinate[0]) < 2 and abs(self.start_pos[1] - coordinate[1]) < 2:
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_king":
-			if settings.state["CHESS"]["CASTLE"]["black_short"] and coordinate == (6,0) and (5,0) not in settings.state["position"]:
+			if settings.state["CHESS"]["CASTLE"]["black_short"] and coordinate == (6,0) and (5,0) not in settings.State().GetChessPiecePositions():
 				self.end_piece = self.start_piece
 				self.end_pos = coordinate
-			elif settings.state["CHESS"]["CASTLE"]["black_long"] and coordinate == (2,0) and (1,0) not in settings.state["position"] and (3,0) not in settings.state["position"]:
+			elif settings.state["CHESS"]["CASTLE"]["black_long"] and coordinate == (2,0) and (1,0) not in settings.State().GetChessPiecePositions() and (3,0) not in settings.State().GetChessPiecePositions():
 				self.end_piece = self.start_piece
 				self.end_pos = coordinate
 			elif abs(self.start_pos[0] - coordinate[0]) < 2 and abs(self.start_pos[1] - coordinate[1]) < 2:
@@ -90,18 +91,18 @@ class Moves:
 			invalid_move = False
 			if self.start_pos[0] == coordinate[0] and self.start_pos[1] != coordinate[1]:
 				for i in range(min(self.start_pos[1],coordinate[1])+1, max(self.start_pos[1],coordinate[1])):
-					if (self.start_pos[0], i) in settings.state["position"]:
+					if (self.start_pos[0], i) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			elif self.start_pos[1] == coordinate[1] and self.start_pos[0] != coordinate[0]:
 				for i in range(min(self.start_pos[0],coordinate[0])+1, max(self.start_pos[0],coordinate[0])):
-					if (i, self.start_pos[1]) in settings.state["position"]:
+					if (i, self.start_pos[1]) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			elif abs(self.start_pos[0]-coordinate[0]) == abs(self.start_pos[1]-coordinate[1]):
 				x, y = self.start_pos
 				x_dir = 1 if self.start_pos[0] < coordinate[0] else -1
 				y_dir = 1 if self.start_pos[1] < coordinate[1] else -1
 				for i in range(1, abs(self.start_pos[0]-coordinate[0])):
-					if (x+i*x_dir, y+i*y_dir) in settings.state["position"]:
+					if (x+i*x_dir, y+i*y_dir) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			else:
 				invalid_move = True
@@ -113,11 +114,11 @@ class Moves:
 			invalid_move = False
 			if self.start_pos[0] == coordinate[0]:
 				for i in range(min(self.start_pos[1],coordinate[1])+1, max(self.start_pos[1],coordinate[1])):
-					if (self.start_pos[0], i) in settings.state["position"]:
+					if (self.start_pos[0], i) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			elif self.start_pos[1] == coordinate[1]:
 				for i in range(min(self.start_pos[0],coordinate[0])+1, max(self.start_pos[0],coordinate[0])):
-					if (i, self.start_pos[1]) in settings.state["position"]:
+					if (i, self.start_pos[1]) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			else:
 				invalid_move = True
@@ -132,7 +133,7 @@ class Moves:
 				x_dir = 1 if self.start_pos[0] < coordinate[0] else -1
 				y_dir = 1 if self.start_pos[1] < coordinate[1] else -1
 				for i in range(1, abs(self.start_pos[0]-coordinate[0])):
-					if (x+i*x_dir, y+i*y_dir) in settings.state["position"]:
+					if (x+i*x_dir, y+i*y_dir) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			else:
 				invalid_move = True
@@ -148,7 +149,7 @@ class Moves:
 
 		# Pawn
 		elif self.start_piece == "white_pawn":
-			if self.start_pos[0] == coordinate[0] and coordinate not in settings.state["position"]:
+			if self.start_pos[0] == coordinate[0] and coordinate not in settings.State().GetChessPiecePositions():
 				if self.start_pos[1] == 6 and coordinate[1] == 4:
 					self.end_piece = self.start_piece
 					self.end_pos = coordinate
@@ -156,7 +157,7 @@ class Moves:
 					self.end_piece = self.start_piece
 					self.end_pos = coordinate
 			elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] + 1:
-				if coordinate in settings.state["position"] and settings.state["position"][coordinate].split("_")[0] == "black":
+				if coordinate in settings.State().GetChessPiecePositions() and settings.State().GetChessPiecePositions()[coordinate].split("_")[0] == "black":
 					self.record_end_piece_and_pos(selected_piece, coordinate)
 				# En passant
 				elif self.start_pos[1] == 3 and settings.state["move_list"][-1].start_piece == "black_pawn" and settings.state["move_list"][-1].end_pos[0] == coordinate[0] and settings.state["move_list"][-1].end_pos[1] == settings.state["move_list"][-1].start_pos[1] + 2:
@@ -167,13 +168,13 @@ class Moves:
 			if self.end_pos != 0 and self.end_pos[1] == 0:
 				self.end_piece = self.pawn_promotion("white")
 		elif self.start_piece == "black_pawn":
-			if self.start_pos[0] == coordinate[0] and coordinate not in settings.state["position"]:
+			if self.start_pos[0] == coordinate[0] and coordinate not in settings.State().GetChessPiecePositions():
 				if self.start_pos[1] == 1 and coordinate[1] == 3:
 					self.record_end_piece_and_pos(selected_piece, coordinate)
 				elif self.start_pos[1] == coordinate[1] - 1:
 					self.record_end_piece_and_pos(selected_piece, coordinate)
 			elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] - 1:
-				if coordinate in settings.state["position"] and settings.state["position"][coordinate].split("_")[0] == "white":
+				if coordinate in settings.State().GetChessPiecePositions() and settings.State().GetChessPiecePositions()[coordinate].split("_")[0] == "white":
 					self.record_end_piece_and_pos(selected_piece, coordinate)
 				# En passant
 				elif self.start_pos[1] == 4 and settings.state["move_list"][-1].start_piece == "white_pawn" and settings.state["move_list"][-1].end_pos[0] == coordinate[0] and settings.state["move_list"][-1].end_pos[1] == settings.state["move_list"][-1].start_pos[1] - 2:
@@ -197,10 +198,10 @@ class Moves:
 					self.piece_to_promote_to = chosen_piece
 					self.promotion_window.destroy()
 
-				for piece in settings.parameters["Chess"]["TypesOfChessPieces"]:
+				for piece in settings.Parameters().GetTypesOfChessPieces("Chess"):
 					if piece != "king" and piece != "pawn":
 						ChessPiece = color + "_" + piece
-						ButtonSize = settings.parameters["CellSize"]["Chess"]
+						ButtonSize = settings.Parameters().GetCellSize("Chess")
 						img = ImgProcessor().GetPhotoImage("Chess", ChessPiece)
 						bt = tkinter.Button(self.promotion_window, image = img, command = lambda s = ChessPiece : callback(s), width = ButtonSize, height = ButtonSize)
 						bt.image = img
@@ -233,10 +234,10 @@ class Moves:
 		
 		# Xiang
 		elif self.start_piece == "red_xiang":
-			if coordinate[1] > 4 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
+			if coordinate[1] > 4 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.State().GetChessPiecePositions():
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 		elif self.start_piece == "black_xiang":
-			if coordinate[1] < 6 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
+			if coordinate[1] < 6 and abs(self.start_pos[0] - coordinate[0]) == abs(self.start_pos[1] - coordinate[1]) == 2 and ((self.start_pos[0]+coordinate[0])//2, (self.start_pos[1]+coordinate[1])//2) not in settings.State().GetChessPiecePositions():
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 
 		# Ju
@@ -244,11 +245,11 @@ class Moves:
 			invalid_move = False
 			if self.start_pos[0] == coordinate[0]:
 				for i in range(min(self.start_pos[1],coordinate[1])+1, max(self.start_pos[1],coordinate[1])):
-					if (self.start_pos[0], i) in settings.state["position"]:
+					if (self.start_pos[0], i) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			elif self.start_pos[1] == coordinate[1]:
 				for i in range(min(self.start_pos[0],coordinate[0])+1, max(self.start_pos[0],coordinate[0])):
-					if (i, self.start_pos[1]) in settings.state["position"]:
+					if (i, self.start_pos[1]) in settings.State().GetChessPiecePositions():
 						invalid_move = True
 			else:
 				invalid_move = True
@@ -260,7 +261,7 @@ class Moves:
 			if self.start_pos[0] == coordinate[0]:
 				obstacles = 0
 				for i in range(min(self.start_pos[1],coordinate[1])+1, max(self.start_pos[1],coordinate[1])):
-					if (self.start_pos[0], i) in settings.state["position"]:
+					if (self.start_pos[0], i) in settings.State().GetChessPiecePositions():
 						obstacles += 1
 				if selected_piece == '' and obstacles == 0 :
 					self.record_end_piece_and_pos(selected_piece, coordinate)
@@ -269,7 +270,7 @@ class Moves:
 			elif self.start_pos[1] == coordinate[1]:
 				obstacles = 0
 				for i in range(min(self.start_pos[0],coordinate[0])+1, max(self.start_pos[0],coordinate[0])):
-					if (i, self.start_pos[1]) in settings.state["position"]:
+					if (i, self.start_pos[1]) in settings.State().GetChessPiecePositions():
 						obstacles += 1
 				if selected_piece == '' and obstacles == 0 :
 					self.record_end_piece_and_pos(selected_piece, coordinate)
@@ -281,9 +282,9 @@ class Moves:
 			x_diff = abs(self.start_pos[0] - coordinate[0])
 			y_diff = abs(self.start_pos[1] - coordinate[1])
 
-			if x_diff == 1 and y_diff == 2 and (self.start_pos[0],(self.start_pos[1]+coordinate[1])//2) not in settings.state["position"]:
+			if x_diff == 1 and y_diff == 2 and (self.start_pos[0],(self.start_pos[1]+coordinate[1])//2) not in settings.State().GetChessPiecePositions():
 				self.record_end_piece_and_pos(selected_piece, coordinate)
-			elif x_diff == 2 and y_diff == 1 and ((self.start_pos[0]+coordinate[0])//2,self.start_pos[1]) not in settings.state["position"]:
+			elif x_diff == 2 and y_diff == 1 and ((self.start_pos[0]+coordinate[0])//2,self.start_pos[1]) not in settings.State().GetChessPiecePositions():
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 
 		# Bing

@@ -1,12 +1,13 @@
 import tkinter
 from PIL import Image, ImageTk
 
-import settings
+from settings import Parameters, State
 from ImgProcessor import *
 
 class ChessPieces:
 	def __init__(self, frame, chessboard, imageSize = 70):
 		self.frame = frame
+		self.ChessBoard = chessboard
 		self.__radiobtnSize = imageSize
 		self.initialize_menu()
 
@@ -18,21 +19,23 @@ class ChessPieces:
 
 
 	def add_menu(self):
-		ChessType = settings.state["chess_type"]
-		colors = settings.parameters[ChessType]["PlayerColors"]
-		pieces = settings.parameters[ChessType]["TypesOfChessPieces"]
+		ChessType = State().GetChessType()
+		colors = Parameters().GetPlayerColors(ChessType)
+		pieces = Parameters().GetTypesOfChessPieces(ChessType)
 		
-		settings.state["game_is_ongoing"] = True
-		settings.state["selected_piece_to_add_to_board"] = "deselect"
+		State().SetGameIsOngoing(True)
 		var = tkinter.StringVar(value="deselect")
 		def callback():
-			if settings.state["selected_piece_to_add_to_board"] != var.get():
+			if State().GetSelectedPieceToAddToBoard() != var.get():
 				if var.get() != "deselect":
-					settings.state["clear_move_list"]()
-					settings.state["remove_highlights"]()
+					State().ClearMoveList()
+					self.ChessBoard.remove_highlights()
 
-				settings.state["selected_piece_to_add_to_board"] = var.get()
-				settings.state["game_is_ongoing"] = True if var.get() == "deselect" else False
+				State().SetSelectedPieceToAddToBoard(var.get())
+				if var.get() == "deselect":
+					State().SetGameIsOngoing(True)
+				else:
+					State().SetGameIsOngoing(False)
 		
 		for piece in pieces:
 			temp_frame = tkinter.Frame(self.frame)
