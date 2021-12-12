@@ -5,78 +5,29 @@ from ImgProcessor import *
 class ChessBoard:
 	def __init__(self, canvas):
 		self.canvas = canvas
+		self.__InitCanvasParameters()
+		self.InitChessBoard()
 
-		# Prepare variables to store objects when drawing boards and pieces
+	def __InitCanvasParameters(self):
+		Parameters().CalculateDimensionParam()
+		self.canvas.config(width = Parameters().GetCanvasSize(), height = Parameters().GetCanvasSize())
+
 		self.chessboardObjects = list()
 		self.chesspiecesObjects = dict()
-
-		# Prepare to highlight active square
 		self.active_square_objects = list()
-
-		# Setup canvas parameters
-		self.setup_canvas_param()
-
-		# Initialize chess board
-		self.initialize_chess_board()
-
-		# Bind mouse left click
+		
 		self.canvas.bind("<Button-1>", self.lmb_callback)
-	
-	def setup_canvas_param(self, canvasSize = 700):
-		# Set commonly used measurements
-		self.canvas.config(width=canvasSize, height=canvasSize)
-		self.__boardMargin = 0.05 * canvasSize
-		self.__boardSize = 0.9 * canvasSize
-		self.__cellSize = {	"Chess": self.__boardSize / 8,
-							"XiangQi": self.__boardSize / 10}
-		self.__pieceSize = {"Chess": 0.8 * self.__cellSize["Chess"],
-							"XiangQi": 0.98 * self.__cellSize["XiangQi"]}
-		self.__textMargin = { "Chess": 10, "XiangQi": 15}
-
-		# Set number of arrays of chess board
-		self.__xArray = {"Chess": 8, "XiangQi": 9}
-		self.__yArray = {"Chess": 8, "XiangQi": 10}
-
-		# Set X and Y limits for chess board
-		self.__boardXLimits = {
-			"Chess": (self.__boardMargin, self.__boardMargin + self.__boardSize),
-			"XiangQi": (self.__boardMargin + self.__cellSize["XiangQi"] - 0.5*self.__pieceSize["XiangQi"], self.__boardMargin + self.__boardSize - self.__cellSize["XiangQi"] + 0.5*self.__pieceSize["XiangQi"])
-		}
-		self.__boardYLimits = {
-			"Chess": (self.__boardMargin, self.__boardMargin + self.__boardSize),
-			"XiangQi": (self.__boardMargin + 0.5*self.__cellSize["XiangQi"] - 0.5*self.__pieceSize["XiangQi"], self.__boardMargin + self.__boardSize - 0.5*self.__cellSize["XiangQi"] + 0.5*self.__pieceSize["XiangQi"])
-		}
-
-		# Highlight settings
-		self.__highlightLinewidth = {
-			"Chess": 0.1 * self.__cellSize["Chess"],
-			"XiangQi": 0.1 * self.__cellSize["XiangQi"]
-		}
-		self.__highlightColor = {"Chess": "red", "XiangQi": "blue"}
-
-		# Generate center of squares
-		self.__center = {"Chess": dict(), "XiangQi": dict()}
-		for i in range(8):
-			for j in range(8):
-				self.__center["Chess"][(i,j)] = ((i+0.5)*self.__cellSize["Chess"] + self.__boardMargin, (j+0.5)*self.__cellSize["Chess"] + self.__boardMargin)
-		for i in range(9):
-			for j in range(10):
-				self.__center["XiangQi"][(i,j)] = ((i+1)*self.__cellSize["XiangQi"] + self.__boardMargin, (j+0.5)*self.__cellSize["XiangQi"] + self.__boardMargin)
 
 
-
-	def initialize_chess_board(self):
-		# Clear chess board and chess pieces
+	def InitChessBoard(self):
 		self.clear_pieces_from_board()
 		for object in self.chessboardObjects:
 			self.canvas.delete(object)
 
-		# Call functions to draw the chess board
 		if State().GetChessType() == "Chess":
 			self.draw_chess_board()
 		elif State().GetChessType() == "XiangQi":
 			self.draw_xiangqi_board()
-
 		self.starting_positions()
 
 	def resize_canvas(self, canvasSize):
@@ -86,7 +37,8 @@ class ChessBoard:
 			currentPositions[coordinate] = piece
 
 		# Recalculate parameters
-		self.setup_canvas_param(canvasSize)
+		Parameters().CalculateDimensionParam(canvasSize)
+		self.canvas.config(width = canvasSize, height = canvasSize)
 
 		# Clear all objects
 		self.clear_pieces_from_board()
@@ -109,12 +61,12 @@ class ChessBoard:
 		self.active_square_objects = list()
 
 	def add_highlight(self, square):
-		# Highlight active square
 		if square != 0:
-			linewidth = self.__highlightLinewidth[State().GetChessType()]
-			color = self.__highlightColor[State().GetChessType()]
-			x,y = self.__center[State().GetChessType()][square]
-			size = 0.5 * self.__cellSize[State().GetChessType()]
+			ChessType = State().GetChessType()
+			linewidth = Parameters().GetHighlightLinewidth()
+			color = Parameters().GetHighlightColor(ChessType)
+			x,y = Parameters().GetCellCenter(ChessType, square)
+			size = 0.5 * Parameters().GetCellSize(ChessType)
 			length = 0.6 * size
 			offset = 0.1 * linewidth
 
@@ -137,51 +89,85 @@ class ChessBoard:
 
 
 	def draw_chess_board(self):
+		ChessType = "Chess"
+		BoardMargin = Parameters().GetBoardMargin()
+		BoardSize = Parameters().GetBoardSize()
+		CellSize = Parameters().GetCellSize(ChessType)
+		TextMargin = Parameters().GetTextMargin(ChessType)
+
 		# Draw black and white squares
-		self.chessboardObjects.append(self.canvas.create_rectangle(self.__boardMargin, self.__boardMargin, self.__boardMargin+self.__boardSize, self.__boardMargin+self.__boardSize, fill="white", width=4))
-		for i in range(self.__xArray["Chess"]):
-			for j in range(self.__yArray["Chess"]):
+		self.chessboardObjects.append(self.canvas.create_rectangle(BoardMargin, BoardMargin, BoardMargin+BoardSize, BoardMargin+BoardSize, fill="white", width=4))
+		for i in range(Parameters().GetChessboardXArray(ChessType)):
+			for j in range(Parameters().GetChessboardYArray(ChessType)):
 				cell_color = "white" if (i+j)%2 == 0 else "black"
-				x = self.__boardMargin + i * self.__cellSize["Chess"]
-				y = self.__boardMargin + j * self.__cellSize["Chess"]
-				self.chessboardObjects.append(self.canvas.create_rectangle(x, y, x+self.__cellSize["Chess"], y+self.__cellSize["Chess"], fill=cell_color, width=0))
+				x = BoardMargin + i * CellSize
+				y = BoardMargin + j * CellSize
+				self.chessboardObjects.append(self.canvas.create_rectangle(x, y, x+CellSize, y+CellSize, fill=cell_color, width=0))
 		
 		# Insert alphabets and numbers for notation
 		alphabets = ("a","b","c","d","e","f","g","h")
-		for i in range(self.__xArray["Chess"]):
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin + (i+0.5)*self.__cellSize["Chess"], self.__boardMargin + self.__boardSize + self.__textMargin["Chess"], text=alphabets[i], font=12))
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin - self.__textMargin["Chess"], self.__boardMargin + self.__boardSize - (i+0.5)*self.__cellSize["Chess"], text=i+1, font=12))
+		for i in range(Parameters().GetChessboardXArray(ChessType)):
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin + BoardSize + TextMargin, text=alphabets[i], font=12))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin - TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=i+1, font=12))
 
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin + (i+0.5)*self.__cellSize["Chess"], self.__boardMargin - self.__textMargin["Chess"], text=alphabets[i], font=12, angle=180))
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin + self.__boardSize + self.__textMargin["Chess"], self.__boardMargin + self.__boardSize - (i+0.5)*self.__cellSize["Chess"], text=i+1, font=12, angle=180))
-
-
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin - TextMargin, text=alphabets[i], font=12, angle=180))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + BoardSize + TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=i+1, font=12, angle=180))
 
 	def draw_xiangqi_board(self):
-		BOARD_Y_START, BOARD_Y_END = self.__boardYLimits["XiangQi"]
-		LINEWIDTH = 2
-		LINELENGTH = int(0.35 * self.__cellSize["XiangQi"])
-		OFFSET = 2 * LINEWIDTH
+		ChessType = "XiangQi"
+		BoardMargin = Parameters().GetBoardMargin()
+		BoardSize = Parameters().GetBoardSize()
+		CellSize = Parameters().GetCellSize(ChessType)
+		TextMargin = Parameters().GetTextMargin(ChessType)
+
+		BoardYStart, BoardYEnd = Parameters().GetBoardYLimits(ChessType)
+		linewidth = 2
+		linelength = int(0.35 * CellSize)
+		offset = 2 * linewidth
 
 		# Draw horizontal lines
-		for i in range(self.__yArray["XiangQi"]):
-			self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + self.__cellSize["XiangQi"] - 0.5*LINEWIDTH, self.__boardMargin + (i+0.5)*self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - self.__cellSize["XiangQi"] + 0.5*LINEWIDTH, self.__boardMargin + (i+0.5)*self.__cellSize["XiangQi"], width=LINEWIDTH))
+		for i in range(Parameters().GetChessboardYArray(ChessType)):
+			self.chessboardObjects.append(self.canvas.create_line(
+				BoardMargin + CellSize - 0.5*linewidth, BoardMargin + (i+0.5)*CellSize,
+				BoardMargin - CellSize + 0.5*linewidth + BoardSize, BoardMargin + (i+0.5)*CellSize,
+				width=linewidth))
 
 		# Draw vertical lines
-		for i in range(self.__xArray["XiangQi"]):
-			if i == 0 or i == self.__xArray["XiangQi"]-1:
-				self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__cellSize["XiangQi"], self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 0.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
+		for i in range(Parameters().GetChessboardXArray(ChessType)):
+			if i == 0 or i == Parameters().GetChessboardXArray(ChessType)-1:
+				self.chessboardObjects.append(self.canvas.create_line(
+					BoardMargin + (i+1)*CellSize, BoardMargin + 0.5*CellSize,
+					BoardMargin + (i+1)*CellSize, BoardMargin - 0.5*CellSize + BoardSize,
+					width=linewidth))
 			else:
-				self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__cellSize["XiangQi"], self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize - 0.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
-				self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize + 0.5*self.__cellSize["XiangQi"], self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 0.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
+				self.chessboardObjects.append(self.canvas.create_line(
+					BoardMargin + (i+1)*CellSize, BoardMargin + 0.5*CellSize,
+					BoardMargin + (i+1)*CellSize, BoardMargin - 0.5*CellSize + 0.5*BoardSize,
+					width=linewidth))
+				self.chessboardObjects.append(self.canvas.create_line(
+					BoardMargin + (i+1)*CellSize, BoardMargin + 0.5*CellSize + 0.5*BoardSize,
+					BoardMargin + (i+1)*CellSize, BoardMargin - 0.5*CellSize + BoardSize,
+					width=linewidth))
 		
 		# Draw top "X"
-		self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + 0.5*self.__boardSize - self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize + self.__cellSize["XiangQi"], self.__boardMargin + 2.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
-		self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + 0.5*self.__boardSize - self.__cellSize["XiangQi"], self.__boardMargin + 2.5*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize + self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
+		self.chessboardObjects.append(self.canvas.create_line(
+			BoardMargin + 0.5*BoardSize - CellSize, BoardMargin + 0.5*CellSize,
+			BoardMargin + 0.5*BoardSize + CellSize, BoardMargin + 2.5*CellSize,
+			width=linewidth))
+		self.chessboardObjects.append(self.canvas.create_line(
+			BoardMargin + 0.5*BoardSize - CellSize, BoardMargin + 2.5*CellSize,
+			BoardMargin + 0.5*BoardSize + CellSize, BoardMargin + 0.5*CellSize,
+			width=linewidth))
 
 		# Draw bottom "X"
-		self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + 0.5*self.__boardSize - self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 0.5*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize + self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 2.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
-		self.chessboardObjects.append(self.canvas.create_line(self.__boardMargin + 0.5*self.__boardSize - self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 2.5*self.__cellSize["XiangQi"], self.__boardMargin + 0.5*self.__boardSize + self.__cellSize["XiangQi"], self.__boardMargin + self.__boardSize - 0.5*self.__cellSize["XiangQi"], width=LINEWIDTH))
+		self.chessboardObjects.append(self.canvas.create_line(
+			BoardMargin + 0.5*BoardSize - CellSize, BoardMargin + BoardSize - 0.5*CellSize,
+			BoardMargin + 0.5*BoardSize + CellSize, BoardMargin + BoardSize - 2.5*CellSize,
+			width=linewidth))
+		self.chessboardObjects.append(self.canvas.create_line(
+			BoardMargin + 0.5*BoardSize - CellSize, BoardMargin + BoardSize - 2.5*CellSize,
+			BoardMargin + 0.5*BoardSize + CellSize, BoardMargin + BoardSize - 0.5*CellSize,
+			width=linewidth))
 
 		# Draw lines for "pao" and "bing"
 		left_hand_side_coordinates = list()
@@ -198,50 +184,47 @@ class ChessBoard:
 				right_hand_side_coordinates.append((i,j))
 
 		for coordinate in left_hand_side_coordinates:
-			x, y = self.__center["XiangQi"][coordinate]
+			x,y = Parameters().GetCellCenter(ChessType, coordinate)
+			self.chessboardObjects.append(self.canvas.create_line(x-offset, y-offset, x-linelength, y-offset, width=linewidth))
+			self.chessboardObjects.append(self.canvas.create_line(x-offset, y-offset, x-offset, y-linelength, width=linewidth))
 
-			self.chessboardObjects.append(self.canvas.create_line(x-OFFSET, y-OFFSET, x-LINELENGTH, y-OFFSET, width=LINEWIDTH))
-			self.chessboardObjects.append(self.canvas.create_line(x-OFFSET, y-OFFSET, x-OFFSET, y-LINELENGTH, width=LINEWIDTH))
-
-			self.chessboardObjects.append(self.canvas.create_line(x-OFFSET, y+OFFSET, x-LINELENGTH, y+OFFSET, width=LINEWIDTH))
-			self.chessboardObjects.append(self.canvas.create_line(x-OFFSET, y+OFFSET, x-OFFSET, y+LINELENGTH, width=LINEWIDTH))
-
+			self.chessboardObjects.append(self.canvas.create_line(x-offset, y+offset, x-linelength, y+offset, width=linewidth))
+			self.chessboardObjects.append(self.canvas.create_line(x-offset, y+offset, x-offset, y+linelength, width=linewidth))
 
 		for coordinate in right_hand_side_coordinates:
-			x, y = self.__center["XiangQi"][coordinate]
+			x,y = Parameters().GetCellCenter(ChessType, coordinate)
+			self.chessboardObjects.append(self.canvas.create_line(x+offset, y-offset, x+linelength, y-offset, width=linewidth))
+			self.chessboardObjects.append(self.canvas.create_line(x+offset, y-offset, x+offset, y-linelength, width=linewidth))
 
-			self.chessboardObjects.append(self.canvas.create_line(x+OFFSET, y-OFFSET, x+LINELENGTH, y-OFFSET, width=LINEWIDTH))
-			self.chessboardObjects.append(self.canvas.create_line(x+OFFSET, y-OFFSET, x+OFFSET, y-LINELENGTH, width=LINEWIDTH))
-
-			self.chessboardObjects.append(self.canvas.create_line(x+OFFSET, y+OFFSET, x+LINELENGTH, y+OFFSET, width=LINEWIDTH))
-			self.chessboardObjects.append(self.canvas.create_line(x+OFFSET, y+OFFSET, x+OFFSET, y+LINELENGTH, width=LINEWIDTH))
+			self.chessboardObjects.append(self.canvas.create_line(x+offset, y+offset, x+linelength, y+offset, width=linewidth))
+			self.chessboardObjects.append(self.canvas.create_line(x+offset, y+offset, x+offset, y+linelength, width=linewidth))
 
 		# Add numbers
-		for i in range(self.__xArray["XiangQi"]):
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin + (i+1)*self.__cellSize["XiangQi"], BOARD_Y_START - self.__textMargin["XiangQi"], text=i+1, font=12, angle=180))
-			self.chessboardObjects.append(self.canvas.create_text(self.__boardMargin + self.__boardSize - (i+1)*self.__cellSize["XiangQi"], BOARD_Y_END + self.__textMargin["XiangQi"], text=i+1, font=12))
+		for i in range(Parameters().GetChessboardXArray(ChessType)):
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+1)*CellSize, BoardYStart - TextMargin, text=i+1, font=12, angle=180))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + BoardSize - (i+1)*CellSize, BoardYEnd + TextMargin, text=i+1, font=12))
 		
 
 
 	def lmb_callback(self, event):
 		ChessType = State().GetChessType()
 		CellSize = Parameters().GetCellSize(ChessType)
-		BOARD_X_START, BOARD_X_END = self.__boardXLimits[ChessType]
-		BOARD_Y_START, BOARD_Y_END = self.__boardYLimits[ChessType]
+		BoardXStart, BoardXEnd = Parameters().GetBoardXLimits(ChessType)
+		BoardYStart, BoardYEnd = Parameters().GetBoardYLimits(ChessType)
 
 		# Handle events within the chessboard
-		if BOARD_X_START < event.x < BOARD_X_END and BOARD_Y_START < event.y < BOARD_Y_END:
-			x = int((event.x - BOARD_X_START) / CellSize)
-			y = int((event.y - BOARD_Y_START) / CellSize)
+		if BoardXStart < event.x < BoardXEnd and BoardYStart < event.y < BoardYEnd:
+			x = int((event.x - BoardXStart) / CellSize)
+			y = int((event.y - BoardYStart) / CellSize)
 
 			# Check if x,y are allowed values
 			if x < 0: x = 0
-			if x >= self.__xArray[ChessType]:
-				x = self.__xArray[ChessType] - 1
+			if x >= Parameters().GetChessboardXArray(ChessType):
+				x = Parameters().GetChessboardXArray(ChessType) - 1
 
 			if y < 0: y = 0
-			if y >= self.__yArray[ChessType]:
-				y = self.__yArray[ChessType] - 1
+			if y >= Parameters().GetChessboardYArray(ChessType):
+				y = Parameters().GetChessboardYArray(ChessType) - 1
 			
 			coordinate = (x,y)
 
@@ -252,10 +235,7 @@ class ChessBoard:
 
 
 	def change_piece_on_board(self, coordinate):
-		# Check if any piece exists on the selected box
 		self.remove_piece_from_board(coordinate)
-
-		# Add piece
 		if settings.state["selected_piece_to_add_to_board"] != "remove":
 			self.add_piece_to_board(coordinate, settings.state["selected_piece_to_add_to_board"])
 
@@ -269,7 +249,7 @@ class ChessBoard:
 		State().AddChessPieceToPosition(ChessPiece, coordinate)
 		ChessType = State().GetChessType()
 		img = ImgProcessor().GetPhotoImage(ChessType, ChessPiece)
-		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(self.__center[ChessType][coordinate], image=img), img]
+		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, coordinate), image=img), img]
 
 	def clear_pieces_from_board(self):
 		for coordinate in State().GetChessPiecePositions():
@@ -281,7 +261,7 @@ class ChessBoard:
 
 	def move_piece(self, coordinate):
 		CurrentMove = State().GetCurrentMove()
-		CurrentMove.update(settings.state, coordinate)
+		CurrentMove.update(coordinate)
 
 		# Execute move
 		def move_normally(move):

@@ -29,7 +29,7 @@ class Moves:
 
 
 
-	def update(self, state, coordinate):
+	def update(self, coordinate):
 		selected_piece = ""
 		player_color, piece = "", ""
 		if coordinate in settings.State().GetChessPiecePositions():

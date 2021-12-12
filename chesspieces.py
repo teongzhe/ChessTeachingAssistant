@@ -14,9 +14,7 @@ class ChessPieces:
 	def initialize_menu(self):
 		for widget in self.frame.winfo_children():
 			widget.destroy()
-
 		self.add_menu()
-
 
 	def add_menu(self):
 		ChessType = State().GetChessType()

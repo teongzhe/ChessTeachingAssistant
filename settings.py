@@ -2,11 +2,6 @@ import copy
 
 import moves
 
-def init():
-	global state
-	state = dict()
-
-
 
 class Parameters:
 	__instance = None
@@ -24,7 +19,7 @@ class Parameters:
 		self.__InitChessParam()
 		self.__InitXiangQiParam()
 
-		self.__InitDimensionParam()
+		self.CalculateDimensionParam()
 
 
 	def __InitChessParam(self):
@@ -34,6 +29,7 @@ class Parameters:
 			"TypesOfChessPieces"	: ("king", "queen", "rook", "knight", "bishop", "pawn"),
 			"ChessboardXArray"		: 8,
 			"ChessboardYArray"		: 8,
+			"HighlightColor"		: "red",
 		}
 
 	def __InitXiangQiParam(self):
@@ -43,24 +39,61 @@ class Parameters:
 			"TypesOfChessPieces"	: ("shuai", "shi", "xiang", "ju", "ma", "pao", "bing"),
 			"ChessboardXArray"		: 9,
 			"ChessboardYArray"		: 10,
+			"HighlightColor"		: "blue",
 		}
 
-	def __InitDimensionParam(self):
+	def CalculateDimensionParam(self, CanvasSize = 700):
 		self.__dimensions = dict()
-		self.__dimensions["CanvasSize"] = 700
+		self.__dimensions["CanvasSize"] = CanvasSize
 		self.__dimensions["BoardMargin"] = 0.05 * self.GetCanvasSize()
 		self.__dimensions["BoardSize"] = 0.9 * self.GetCanvasSize()
 
 		self.__dimensions["CellSize"] = dict()
 		for ChessType in self.__TypesOfChess:
 			self.__dimensions["CellSize"][ChessType] = self.GetBoardSize() / max(self.GetChessboardXArray(ChessType), self.GetChessboardYArray(ChessType))
-		
+
 		self.__dimensions["ChessPieceSize"] = dict()
 		for ChessType, multiplier in {
 			"Chess"		: 0.8,
 			"XiangQi"	: 0.98,
 		}.items():
 			self.__dimensions["ChessPieceSize"][ChessType] = multiplier * self.GetCellSize(ChessType)
+
+		self.__dimensions["BoardXLimits"] = {
+			"Chess"		: (self.GetBoardMargin(), self.GetBoardMargin() + self.GetBoardSize()),
+			"XiangQi"	: (
+				self.GetBoardMargin() + self.GetCellSize("XiangQi") - 0.5*self.GetChessPieceSize("XiangQi"),
+				self.GetBoardMargin() - self.GetCellSize("XiangQi") + 0.5*self.GetChessPieceSize("XiangQi") + self.GetBoardSize()
+			),
+		}
+		self.__dimensions["BoardYLimits"] = {
+			"Chess"		: (self.GetBoardMargin(), self.GetBoardMargin() + self.GetBoardSize()),
+			"XiangQi"	: (
+				self.GetBoardMargin() + 0.5*self.GetCellSize("XiangQi") - 0.5*self.GetChessPieceSize("XiangQi"),
+				self.GetBoardMargin() - 0.5*self.GetCellSize("XiangQi") + 0.5*self.GetChessPieceSize("XiangQi") + self.GetBoardSize()
+			),
+		}
+
+		self.__dimensions["CellCenter"] = dict()
+		for ChessType, (xOffset, yOffset) in {
+			"Chess"		: (0.5, 0.5),
+			"XiangQi"	: (1.0, 0.5),
+		}.items():
+			self.__dimensions["CellCenter"][ChessType] = dict()
+			for i in range(self.GetChessboardXArray(ChessType)):
+				for j in range(self.GetChessboardYArray(ChessType)):
+					self.__dimensions["CellCenter"][ChessType][(i,j)] = (
+						(i+xOffset)*self.GetCellSize(ChessType) + self.GetBoardMargin(),
+						(j+yOffset)*self.GetCellSize(ChessType) + self.GetBoardMargin()
+					)
+
+		self.__dimensions["TextMargin"] = {
+			"Chess"		: 10,
+			"XiangQi"	: 15,
+		}
+
+		for ChessType in self.GetTypesOfChess():
+			self.__dimensions["HighlightLinewidth"] = 0.1 * self.GetCellSize(ChessType)
 		
 
 	# Chess parameters
@@ -86,6 +119,20 @@ class Parameters:
 		return self.__dimensions["CellSize"][ChessType]
 	def GetChessPieceSize(self, ChessType):
 		return self.__dimensions["ChessPieceSize"][ChessType]
+	def GetTextMargin(self, ChessType):
+		return self.__dimensions["TextMargin"][ChessType]
+	def GetBoardXLimits(self, ChessType):
+		return self.__dimensions["BoardXLimits"][ChessType]
+	def GetBoardYLimits(self, ChessType):
+		return self.__dimensions["BoardYLimits"][ChessType]
+	def GetCellCenter(self, ChessType, coordinate):
+		return self.__dimensions["CellCenter"][ChessType][coordinate]
+
+	# Highlight parameters
+	def GetHighlightLinewidth(self):
+		return self.__dimensions["HighlightLinewidth"]
+	def GetHighlightColor(self, ChessType):
+		return self.__data[ChessType]["HighlightColor"]
 
 
 class State:

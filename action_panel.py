@@ -31,7 +31,7 @@ class ActionPanel:
 	def change_chess_type(self, target_type):
 		State().SetChessType(target_type)
 		self.ChessBoard.clear_pieces_from_board()
-		self.ChessBoard.initialize_chess_board()
+		self.ChessBoard.InitChessBoard()
 		self.chesspieces.initialize_menu()
 
 		State().ClearMoveList()
