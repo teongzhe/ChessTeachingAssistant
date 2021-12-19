@@ -1,5 +1,6 @@
 import tkinter
 import tkinter.font
+from moves import MoveHandler
 
 from settings import Parameters, State
 from ImgProcessor import *
@@ -17,6 +18,7 @@ class MainWindow:
 		self.InitChessBoard()
 		self.InitChessPiecesMenu()
 		self.InitActionPanel()
+		MoveHandler(self.chessboard)
 	
 		self.CaptionPanel.pack(side=tkinter.TOP)
 		self.chesspiecesMenu.frame.pack(side=tkinter.LEFT)
@@ -52,5 +54,7 @@ if __name__ == "__main__":
 
 	root = tkinter.Tk()
 	root.state("zoomed")
+	Parameters().SetRoot(root)
+
 	MainWindow = MainWindow(root)
 	root.mainloop()

@@ -3,7 +3,7 @@ import copy
 import moves
 
 
-class Parameters:
+class Parameters():
 	__instance = None
 	__data = None
 	def __new__(self):
@@ -95,6 +95,11 @@ class Parameters:
 		for ChessType in self.GetTypesOfChess():
 			self.__dimensions["HighlightLinewidth"] = 0.1 * self.GetCellSize(ChessType)
 		
+	# Root
+	def SetRoot(self, root):
+		self.__root = root
+	def GetRoot(self):
+		return self.__root
 
 	# Chess parameters
 	def GetTypesOfChess(self):
@@ -198,11 +203,17 @@ class State:
 	def GetCurrentMoveIndex(self):
 		return self.__data["CurrentMoveIndex"]
 
-	def AddChessPieceToPosition(self, ChessPiece, coordinate):
-		self.__data["Position"][coordinate] = ChessPiece
+	def AddChessPieceToPosition(self, PlayerColor, PieceType, coordinate):
+		self.__data["Position"][coordinate] = {
+			"PlayerColor"	: PlayerColor,
+			"PieceType"		: PieceType,
+		}
 	def RemoveChessPieceFromPosition(self, coordinate):
-		self.__data["Position"].pop(coordinate)
+		if coordinate in self.__data["Position"]:
+			self.__data["Position"].pop(coordinate)
 	def GetChessPieceAtPosition(self, coordinate):
+		if coordinate not in self.__data["Position"]:
+			return {"PlayerColor": None, "PieceType": None}
 		return self.__data["Position"][coordinate]
 	def ClearChessPiecePositions(self):
 		self.__data["Position"] = dict()

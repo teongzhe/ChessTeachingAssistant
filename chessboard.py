@@ -1,6 +1,7 @@
 import settings
 from settings import Parameters, State
 from ImgProcessor import *
+from moves import MoveHandler
 
 class ChessBoard:
 	def __init__(self, canvas):
@@ -53,7 +54,7 @@ class ChessBoard:
 		
 		# Add pieces to board
 		for coordinate, chessPiece in currentPositions.items():
-			self.add_piece_to_board(coordinate, chessPiece)
+			self.add_piece_to_board(coordinate, chessPiece["PlayerColor"] + "_" + chessPiece["PieceType"])
 	
 	def remove_highlights(self):
 		for object in self.active_square_objects:
@@ -229,15 +230,28 @@ class ChessBoard:
 			coordinate = (x,y)
 
 			if State().IsGameOngoing():
-				self.move_piece(coordinate)
+				# self.move_piece(coordinate)
+				MoveHandler().Process(coordinate)
 			else:
 				self.change_piece_on_board(coordinate)
-
 
 	def change_piece_on_board(self, coordinate):
 		self.remove_piece_from_board(coordinate)
 		if settings.state["selected_piece_to_add_to_board"] != "remove":
 			self.add_piece_to_board(coordinate, settings.state["selected_piece_to_add_to_board"])
+
+	def RemovePieceFromBoard(self, coordinate):
+		if coordinate in State().GetChessPiecePositions():
+			self.canvas.delete(self.chesspiecesObjects[coordinate][0])
+			self.chesspiecesObjects.pop(coordinate)
+			State().RemoveChessPieceFromPosition(coordinate)
+
+	def AddPieceToBoard(self, PlayerColor, PieceType, coordinate):
+		State().AddChessPieceToPosition(PlayerColor, PieceType, coordinate)
+		ChessType = State().GetChessType()
+		print(PlayerColor, PieceType)
+		img = ImgProcessor().GetPhotoImage(ChessType, PlayerColor + "_" + PieceType)
+		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, coordinate), image=img), img]
 
 	def remove_piece_from_board(self, coordinate):
 		if coordinate in State().GetChessPiecePositions():
@@ -246,7 +260,8 @@ class ChessBoard:
 			State().RemoveChessPieceFromPosition(coordinate)
 	
 	def add_piece_to_board(self, coordinate, ChessPiece):
-		State().AddChessPieceToPosition(ChessPiece, coordinate)
+		PlayerColor, PieceType = ChessPiece.split("_")
+		State().AddChessPieceToPosition(PlayerColor, PieceType, coordinate)
 		ChessType = State().GetChessType()
 		img = ImgProcessor().GetPhotoImage(ChessType, ChessPiece)
 		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, coordinate), image=img), img]

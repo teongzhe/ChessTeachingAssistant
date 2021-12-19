@@ -1,6 +1,7 @@
 import tkinter
+import copy
 
-import settings
+from settings import Parameters, State
 from ImgProcessor import *
 
 
@@ -30,11 +31,10 @@ class Moves:
 
 
 	def update(self, coordinate):
-		selected_piece = ""
 		player_color, piece = "", ""
 		if coordinate in settings.State().GetChessPiecePositions():
-			selected_piece = settings.State().GetChessPieceAtPosition(coordinate)
-			player_color, piece = selected_piece.split("_")
+			player_color, piece = settings.State().GetChessPieceAtPosition(coordinate)
+		selected_piece = player_color + "_" + piece
 		
 		if self.start_piece == "":
 			# Select chess piece at specified coordinate
@@ -147,71 +147,6 @@ class Moves:
 			if (x_diff == 1 and y_diff == 2) or (x_diff == 2 and y_diff == 1):
 				self.record_end_piece_and_pos(selected_piece, coordinate)
 
-		# Pawn
-		elif self.start_piece == "white_pawn":
-			if self.start_pos[0] == coordinate[0] and coordinate not in settings.State().GetChessPiecePositions():
-				if self.start_pos[1] == 6 and coordinate[1] == 4:
-					self.end_piece = self.start_piece
-					self.end_pos = coordinate
-				elif self.start_pos[1] == coordinate[1] + 1:
-					self.end_piece = self.start_piece
-					self.end_pos = coordinate
-			elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] + 1:
-				if coordinate in settings.State().GetChessPiecePositions() and settings.State().GetChessPiecePositions()[coordinate].split("_")[0] == "black":
-					self.record_end_piece_and_pos(selected_piece, coordinate)
-				# En passant
-				elif self.start_pos[1] == 3 and settings.state["move_list"][-1].start_piece == "black_pawn" and settings.state["move_list"][-1].end_pos[0] == coordinate[0] and settings.state["move_list"][-1].end_pos[1] == settings.state["move_list"][-1].start_pos[1] + 2:
-					self.end_piece = self.start_piece
-					self.end_pos = coordinate
-					self.piece_taken = "black_pawn"
-					self.piece_taken_pos = (coordinate[0], coordinate[1]+1)
-			if self.end_pos != 0 and self.end_pos[1] == 0:
-				self.end_piece = self.pawn_promotion("white")
-		elif self.start_piece == "black_pawn":
-			if self.start_pos[0] == coordinate[0] and coordinate not in settings.State().GetChessPiecePositions():
-				if self.start_pos[1] == 1 and coordinate[1] == 3:
-					self.record_end_piece_and_pos(selected_piece, coordinate)
-				elif self.start_pos[1] == coordinate[1] - 1:
-					self.record_end_piece_and_pos(selected_piece, coordinate)
-			elif abs(self.start_pos[0] - coordinate[0]) == 1 and self.start_pos[1] == coordinate[1] - 1:
-				if coordinate in settings.State().GetChessPiecePositions() and settings.State().GetChessPiecePositions()[coordinate].split("_")[0] == "white":
-					self.record_end_piece_and_pos(selected_piece, coordinate)
-				# En passant
-				elif self.start_pos[1] == 4 and settings.state["move_list"][-1].start_piece == "white_pawn" and settings.state["move_list"][-1].end_pos[0] == coordinate[0] and settings.state["move_list"][-1].end_pos[1] == settings.state["move_list"][-1].start_pos[1] - 2:
-					self.end_piece = self.start_piece
-					self.end_pos = coordinate
-					self.piece_taken = "black_pawn"
-					self.piece_taken_pos = (coordinate[0], coordinate[1]-1)
-			if self.end_pos != 0 and self.end_pos[1] == 7:
-				self.end_piece = self.pawn_promotion("black")
-
-	def pawn_promotion(self, color):
-		class promotion_prompt:
-			def __init__(self, master):
-				self.piece_to_promote_to = ""
-
-				# Create promotion window
-				self.promotion_window = tkinter.Toplevel(master)
-				self.promotion_window.title("Promotion")
-
-				def callback(chosen_piece):
-					self.piece_to_promote_to = chosen_piece
-					self.promotion_window.destroy()
-
-				for piece in settings.Parameters().GetTypesOfChessPieces("Chess"):
-					if piece != "king" and piece != "pawn":
-						ChessPiece = color + "_" + piece
-						ButtonSize = settings.Parameters().GetCellSize("Chess")
-						img = ImgProcessor().GetPhotoImage("Chess", ChessPiece)
-						bt = tkinter.Button(self.promotion_window, image = img, command = lambda s = ChessPiece : callback(s), width = ButtonSize, height = ButtonSize)
-						bt.image = img
-						bt.pack(side = tkinter.LEFT)
-				
-				master.wait_window(self.promotion_window)
-
-		promotion = promotion_prompt(settings.root)
-		return promotion.piece_to_promote_to
-
 	###########################################################
 	###						Xiangqi							###
 	###########################################################
@@ -300,3 +235,249 @@ class Moves:
 						self.record_end_piece_and_pos(selected_piece, coordinate)
 					elif self.start_pos[0] == coordinate[0]:
 						self.record_end_piece_and_pos(selected_piece, coordinate)
+
+
+class Move:
+	def __init__(self):
+		self.__PlayerColor = None
+		self.__StartPiece = None
+		self.__StartPos = None
+		self.__EndPiece = None
+		self.__EndPos = None
+		self.__TakenPiece = None
+		self.__TakenPiecePos = None
+		self.__DisabledCastleTypes = list()
+
+	def __str__(self):
+		EndPosString, PieceTakenString = "", ""
+		if self.GetEndPos() != None:
+			EndPosString = " to {}".format(self.GetEndPos())
+			if self.GetPieceTaken() != None:
+				PieceTakenString = " taking {} at {}".format(self.GetPieceTaken(), self.GetPieceTakenPos())
+		return "{} {} from {}{}{}".format(self.GetPlayerColor(), self.GetStartPiece(), self.GetStartPos(), EndPosString, PieceTakenString)
+
+	def GetPlayerColor(self):
+		return self.__PlayerColor
+	def GetStartPiece(self):
+		return self.__StartPiece
+	def GetStartPos(self):
+		return self.__StartPos
+	def GetEndPiece(self):
+		return self.__EndPiece
+	def GetEndPos(self):
+		return self.__EndPos
+	def GetPieceTaken(self):
+		return self.__TakenPiece
+	def GetPieceTakenPos(self):
+		return self.__TakenPiecePos
+	def GetDisabledCastleTypes(self):
+		return self.__DisabledCastleTypes
+
+	def SetStartPieceAndPos(self, PlayerColor, PieceType, Position):
+		self.__PlayerColor = PlayerColor
+		self.__StartPiece = PieceType
+		self.__StartPos = Position
+	def SetEndPiece(self, PieceType):
+		self.__EndPiece = PieceType
+	def SetEndPos(self, Position):
+		self.__EndPiece = self.GetStartPiece()
+		self.__EndPos = Position
+	def SetTakenPieceAndPos(self, PieceType, Position):
+		self.__TakenPiece = PieceType
+		self.__TakenPiecePos = Position
+	def SetTakenPieceAndPos(self, PieceType, Position):
+		self.__TakenPiece = PieceType
+		self.__TakenPiecePos = Position
+
+
+class MoveHandler:
+	__instance = None
+	__data = None
+	def __new__(self, chessboard = None):
+		if not self.__instance:
+			if chessboard != None:
+				self.__instance = super(MoveHandler, self).__new__(self)
+				self.__ChessBoard = chessboard
+				self.__instance.__initialize()
+			else:
+				print("Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!")
+				exit(1)
+		return self.__instance
+
+	def __initialize(self):
+		self.__data = {
+			"Castling"		: dict(),
+			"MoveList"		: list(),
+			"MoveIndex"		: 0,
+			"CurrentMove"	: Move(),
+		}
+		self.ResetCastlingStatus()
+
+
+	def ResetCastlingStatus(self):
+		for color, KingYCoordinate in {"white": 7, "black": 0}.items():
+			if State().GetChessPieceAtPosition((4,KingYCoordinate)) == (color, "king"):
+				for CastleType, RookXCoordinate in {"Long": 0, "Short": 7}.items():
+					if State().GetChessPieceAtPosition((RookXCoordinate, KingYCoordinate)) == (color, "rook"):
+						self.SetCastlingStatus(color + "_" + CastleType, True)
+					else:
+						self.SetCastlingStatus(color + "_" + CastleType, False)
+			else:
+				for CastleType in ("Long", "Short"):
+					self.SetCastlingStatus(color + "_" +  CastleType, False)
+
+	def SetCastlingStatus(self, CastleType, Status):
+		self.__data["Castling"][CastleType] = Status
+	def GetCastlingStatus(self, CastleType):
+		return self.__data["Castling"][CastleType]
+
+	def GetPreviousMove(self):
+		index = self.GetMoveIndex()
+		if index == 0:
+			return None
+		return self.__data["MoveList"][index-1]
+	def GetCurrentMove(self):
+		return self.__data["CurrentMove"]
+
+	def IncrementMoveIndex(self):
+		self.__data["MoveIndex"] += 1
+	def DecrementMoveIndex(self):
+		self.__data["MoveIndex"] -= 1
+	def GetMoveIndex(self):
+		return self.__data["MoveIndex"]
+
+
+	def Process(self, coordinate):
+		SelectedPiece = State().GetChessPieceAtPosition(coordinate)
+		PlayerColor = SelectedPiece["PlayerColor"]
+		PieceType = SelectedPiece["PieceType"]
+
+		if self.GetCurrentMove().GetStartPiece() == None:
+			if PieceType != None and (self.GetMoveIndex() == 0 or self.GetPreviousMove().GetPlayerColor() != PlayerColor):
+				self.GetCurrentMove().SetStartPieceAndPos(PlayerColor, PieceType, coordinate)
+				self.__ChessBoard.remove_highlights()
+				self.__ChessBoard.add_highlight(coordinate)
+		else:
+			if PieceType != None and PlayerColor == self.GetCurrentMove().GetPlayerColor():
+				self.GetCurrentMove().SetStartPieceAndPos(PlayerColor, PieceType, coordinate)
+				self.__ChessBoard.remove_highlights()
+				self.__ChessBoard.add_highlight(coordinate)
+			else:
+				ChessType = State().GetChessType()
+				if ChessType == "Chess":
+					self.ChessMove(coordinate)
+				elif ChessType == "XiangQi":
+					self.XiangQiMove(coordinate)
+
+
+	def ChessMove(self, coordinate):
+		StartPiece = self.GetCurrentMove().GetStartPiece()
+		if StartPiece == None:
+			print("An error occured when getting StartPiece for CurrentMove in MoveHandler!")
+			exit(1)
+
+		isValidMove = False
+		if StartPiece == "pawn":
+			isValidMove = self.PawnMove(coordinate)
+
+		if isValidMove:
+			self.RegisterMove()
+
+
+	def XiangQiMove(self, coordinate):
+		print("XiangQi move validator")
+
+
+	def TakeBackMove(self):
+		print("Take back move")
+
+	def UndoTakeBack(self):
+		print("Undo take back")
+
+	def RegisterMove(self):
+		self.__data["MoveList"].append(copy.deepcopy(self.GetCurrentMove()))
+		self.__data["CurrentMove"] = Move()
+		self.IncrementMoveIndex()
+
+
+	def PawnMove(self, coordinate):
+		PieceType = "pawn"
+		PlayerColor = self.GetCurrentMove().GetPlayerColor()
+		if PlayerColor == "white":
+			StartingRow = 6
+			MoveDirection = -1
+		else:
+			StartingRow = 1
+			MoveDirection = 1
+
+		isValidMove = False
+		# Check if pawn is moving straight
+		if coordinate[0] == self.GetCurrentMove().GetStartPos()[0]:
+			StepsTaken = coordinate[1] - self.GetCurrentMove().GetStartPos()[1]
+			if StepsTaken == MoveDirection:
+				isValidMove = True
+			elif self.GetCurrentMove().GetStartPos()[1] == StartingRow and StepsTaken == MoveDirection * 2:
+				isValidMove = True
+
+		# Check if pawn is taking another piece
+		elif abs(coordinate[0] - self.GetCurrentMove().GetStartPos()[0]) == 1 and coordinate[1] - self.GetCurrentMove().GetStartPos()[1] == MoveDirection:
+			TakenPiece = State().GetChessPieceAtPosition(coordinate)
+			if TakenPiece["PieceType"] != None:
+				isValidMove = True
+				self.GetCurrentMove().SetTakenPieceAndPos(PieceType, coordinate)
+			# En passant
+			else:
+				EnPassantEndingRow = {"white": 2, "black": 5}
+				if coordinate[1] == EnPassantEndingRow[PlayerColor]:
+					EnemyPawnPos = (coordinate[0], self.GetCurrentMove().GetStartPos()[1])
+					EnemyPawn = State().GetChessPieceAtPosition(EnemyPawnPos)
+					if EnemyPawn["PlayerColor"] != PlayerColor and EnemyPawn["PieceType"] == PieceType:
+						if self.GetMoveIndex() == 0:
+							self.GetCurrentMove().SetTakenPiecePos(PieceType, coordinate)
+							isValidMove = True
+						elif self.GetPreviousMove().GetStartPiece() == PieceType and self.GetPreviousMove().GetEndPos()[0] == coordinate[0] and abs(self.GetPreviousMove().GetStartPos()[1] - self.GetPreviousMove().GetEndPos()[1]) == 2:
+							self.GetCurrentMove().SetTakenPieceAndPos(PieceType, EnemyPawnPos)
+							isValidMove = True
+
+		def PawnPromotion(color):
+			class PromotionPrompt:
+				def __init__(self, root):
+					self.PieceToPromoteTo = None
+
+					self.PromotionWindow = tkinter.Toplevel(root)
+					self.PromotionWindow.title("Promotion")
+
+					def callback(ChosenPiece):
+						self.PieceToPromoteTo = ChosenPiece
+						self.PromotionWindow.destroy()
+					
+					for PieceType in Parameters().GetTypesOfChessPieces("Chess"):
+						if PieceType != "king" and PieceType != "pawn":
+							ImgName = color + "_" + PieceType
+							ButtonSize = Parameters().GetCellSize("Chess")
+							img = ImgProcessor().GetPhotoImage("Chess", ImgName)
+							bt = tkinter.Button(self.PromotionWindow, image = img, command = lambda s = PieceType : callback(s), width = ButtonSize, height = ButtonSize)
+							bt.image = img
+							bt.pack(side = tkinter.LEFT)
+
+					root.wait_window(self.PromotionWindow)
+
+			promotion = PromotionPrompt(Parameters().GetRoot())
+			if promotion.PieceToPromoteTo == None:
+				return "queen"
+			return promotion.PieceToPromoteTo
+
+		if isValidMove:
+			self.GetCurrentMove().SetEndPos(coordinate)
+			PromotionRow = {"white": 0, "black": 7}
+			if coordinate[1] == PromotionRow[PlayerColor]:
+				self.GetCurrentMove().SetEndPiece(PawnPromotion(PlayerColor))
+
+			CurrentMove = self.GetCurrentMove()
+			self.__ChessBoard.RemovePieceFromBoard(CurrentMove.GetPieceTakenPos())
+			self.__ChessBoard.RemovePieceFromBoard(CurrentMove.GetStartPos())
+			self.__ChessBoard.AddPieceToBoard(CurrentMove.GetPlayerColor(), CurrentMove.GetEndPiece(), CurrentMove.GetEndPos())
+			self.__ChessBoard.add_highlight(coordinate)
+			return True
+
+		return False
