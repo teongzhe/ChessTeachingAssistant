@@ -2,6 +2,7 @@ import tkinter
 from tkinter import filedialog, messagebox
 
 from settings import Parameters, State
+from moves import MoveHandler
 
 class ActionPanel:
 	def __init__(self, frame, chesspieces, chessboard, CaptionPanel):
@@ -48,8 +49,8 @@ class ActionPanel:
 		tkinter.Button(main_frame, text="Clear board", command=self.ChessBoard.clear_pieces_from_board, width=BUTTON_WIDTH).pack(anchor="w")
 
 		# Take back and undo take back
-		tkinter.Button(main_frame, text="Take back move", command=self.ChessBoard.take_back, width=BUTTON_WIDTH).pack(anchor="w")
-		tkinter.Button(main_frame, text="Undo take back", command=self.ChessBoard.forward, width=BUTTON_WIDTH).pack(anchor="w")
+		tkinter.Button(main_frame, text="Take back move", command=MoveHandler().TakeBackMove, width=BUTTON_WIDTH).pack(anchor="w")
+		tkinter.Button(main_frame, text="Undo take back", command=MoveHandler().UndoTakeBack, width=BUTTON_WIDTH).pack(anchor="w")
 
 		# Quick save and quick load
 		def quicksave():

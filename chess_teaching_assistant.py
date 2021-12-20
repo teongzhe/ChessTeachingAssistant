@@ -17,8 +17,8 @@ class MainWindow:
 		self.InitCaptionPanel()
 		self.InitChessBoard()
 		self.InitChessPiecesMenu()
-		self.InitActionPanel()
 		MoveHandler(self.chessboard)
+		self.InitActionPanel()
 	
 		self.CaptionPanel.pack(side=tkinter.TOP)
 		self.chesspiecesMenu.frame.pack(side=tkinter.LEFT)
