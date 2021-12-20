@@ -249,7 +249,6 @@ class ChessBoard:
 	def AddPieceToBoard(self, PlayerColor, PieceType, coordinate):
 		State().AddChessPieceToPosition(PlayerColor, PieceType, coordinate)
 		ChessType = State().GetChessType()
-		print(PlayerColor, PieceType)
 		img = ImgProcessor().GetPhotoImage(ChessType, PlayerColor + "_" + PieceType)
 		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, coordinate), image=img), img]
 
