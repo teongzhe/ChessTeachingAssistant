@@ -164,7 +164,7 @@ class State:
 		self.__data["ActiveSquare"] = 0
 		self.__data["MoveList"] = list()
 		self.__data["PreviousPlayer"] = ""
-		self.__data["CurrentMove"] = moves.Moves()
+		self.__data["CurrentMove"] = moves.Move()
 		self.__data["CurrentMoveIndex"] = -1
 	
 
@@ -211,9 +211,13 @@ class State:
 	def RemoveChessPieceFromPosition(self, coordinate):
 		if coordinate in self.__data["Position"]:
 			self.__data["Position"].pop(coordinate)
-	def GetChessPieceAtPosition(self, coordinate):
+	def PieceExistsAtPosition(self, coordinate):
 		if coordinate not in self.__data["Position"]:
-			return {"PlayerColor": None, "PieceType": None}
+			return False
+		return True
+	def GetChessPieceAtPosition(self, coordinate):
+		if not self.PieceExistsAtPosition(coordinate):
+			return None
 		return self.__data["Position"][coordinate]
 	def ClearChessPiecePositions(self):
 		self.__data["Position"] = dict()
