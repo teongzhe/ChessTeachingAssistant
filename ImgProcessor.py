@@ -2,8 +2,7 @@ import tkinter
 from PIL import Image, ImageTk
 
 import settings
-MainDirectory = "img"
-
+MainDirectory = 'img'
 
 
 class ImgProcessor:
@@ -27,14 +26,14 @@ class ImgProcessor:
 
 		if ChessType not in self.__img.keys():
 			self.__img[ChessType] = dict()
-			DirectoryPath = MainDirectory + "/" + ChessType + "/"
+			DirectoryPath = MainDirectory + '/' + ChessType + '/'
 			for color in settings.Parameters().GetPlayerColors(ChessType):
 				for piece in settings.Parameters().GetTypesOfChessPieces(ChessType):
-					ChessPiece = color + "_" + piece
+					ChessPiece = color + '_' + piece
 					try:
-						self.__img[ChessType][ChessPiece] = Image.open(DirectoryPath + ChessPiece + ".png")
+						self.__img[ChessType][ChessPiece] = Image.open(DirectoryPath + ChessPiece + '.png')
 					except FileNotFoundError as e:
-						tkinter.messagebox.showerror("Error", e)
+						tkinter.messagebox.showerror('Error', e)
 						exit(1)
 
 	def ResizeChessPieceImages(self, ChessType):

@@ -17,13 +17,13 @@ class Move:
 		self.__DisabledCastleTypes = list()
 
 	def __str__(self):
-		EndPosString, PieceTakenString = "", ""
+		EndPosString, PieceTakenString = '', ''
 		if self.GetEndPos() != None:
-			EndPosString = " to {}".format(self.GetEndPos())
+			EndPosString = ' to {}'.format(self.GetEndPos())
 			if self.GetTakenPiecePos() != None:
 				PieceTaken = self.GetTakenPiece()
-				PieceTakenString = " taking {} {} at {}".format(PieceTaken["PlayerColor"], PieceTaken["PieceType"], self.GetTakenPiecePos())
-		return "{} {} from {}{}{}".format(self.GetPlayerColor(), self.GetStartPiece(), self.GetStartPos(), EndPosString, PieceTakenString)
+				PieceTakenString = ' taking {} {} at {}'.format(PieceTaken['PlayerColor'], PieceTaken['PieceType'], self.GetTakenPiecePos())
+		return '{} {} from {}{}{}'.format(self.GetPlayerColor(), self.GetStartPiece(), self.GetStartPos(), EndPosString, PieceTakenString)
 
 	def GetPlayerColor(self):
 		return self.__PlayerColor
@@ -71,65 +71,65 @@ class MoveHandler:
 				self.__ChessBoard = chessboard
 				self.__instance.__initialize()
 			else:
-				print("Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!")
+				print('Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!')
 				exit(1)
 		return self.__instance
 
 	def __initialize(self):
 		self.__data = {
-			"Castling"		: dict(),
-			"MoveList"		: list(),
-			"MoveIndex"		: 0,
-			"CurrentMove"	: Move(),
+			'Castling'		: dict(),
+			'MoveList'		: list(),
+			'MoveIndex'		: 0,
+			'CurrentMove'	: Move(),
 		}
 		self.ResetCastlingStatus()
 
 
 	def ResetCastlingStatus(self):
-		for color, KingYCoordinate in {"white": 7, "black": 0}.items():
+		for color, KingYCoordinate in {'white': 7, 'black': 0}.items():
 			KingPiece = State().GetChessPieceAtPosition((4, KingYCoordinate))
-			if KingPiece["PlayerColor"] == color and KingPiece["PieceType"] == "king":
-				for CastleType, RookXCoordinate in {"Long": 0, "Short": 7}.items():
+			if KingPiece['PlayerColor'] == color and KingPiece['PieceType'] == 'king':
+				for CastleType, RookXCoordinate in {'Long': 0, 'Short': 7}.items():
 					RookPiece = State().GetChessPieceAtPosition((RookXCoordinate, KingYCoordinate))
 					if RookPiece == None:
 						continue
-					if RookPiece["PlayerColor"] == color and RookPiece["PieceType"] == "rook":
+					if RookPiece['PlayerColor'] == color and RookPiece['PieceType'] == 'rook':
 						self.SetCastlingStatus(color, CastleType, True)
 					else:
 						self.SetCastlingStatus(color, CastleType, False)
 			else:
-				for CastleType in ("Long", "Short"):
+				for CastleType in ('Long', 'Short'):
 					self.SetCastlingStatus(color,  CastleType, False)
 		
 	def SetCastlingStatus(self, PlayerColor, CastleType, Status):
-		self.__data["Castling"][(PlayerColor, CastleType)] = Status
+		self.__data['Castling'][(PlayerColor, CastleType)] = Status
 	def GetCastlingStatus(self, PlayerColor, CastleType):
-		return self.__data["Castling"][(PlayerColor, CastleType)]
+		return self.__data['Castling'][(PlayerColor, CastleType)]
 
 	def GetPreviousMove(self):
 		index = self.GetMoveIndex()
 		if index == 0:
 			return None
-		return self.__data["MoveList"][index-1]
+		return self.__data['MoveList'][index-1]
 	def GetCurrentMove(self):
-		return self.__data["CurrentMove"]
+		return self.__data['CurrentMove']
 	def GetMoveListLength(self):
-		return len(self.__data["MoveList"])
+		return len(self.__data['MoveList'])
 
 	def IncrementMoveIndex(self):
-		self.__data["MoveIndex"] += 1
+		self.__data['MoveIndex'] += 1
 	def DecrementMoveIndex(self):
-		self.__data["MoveIndex"] -= 1
+		self.__data['MoveIndex'] -= 1
 	def GetMoveIndex(self):
-		return self.__data["MoveIndex"]
+		return self.__data['MoveIndex']
 	def GetMoveFromIndex(self):
-		return self.__data["MoveList"][self.GetMoveIndex()-1]
+		return self.__data['MoveList'][self.GetMoveIndex()-1]
 
 	def GetCastleTypeFromXCoordinate(self, xCoordinate):
 		if xCoordinate == 2:
-			return "Long"
+			return 'Long'
 		if xCoordinate == 6:
-			return "Short"
+			return 'Short'
 		return None
 	def GetPlayerColorFromYCoordinate(self, yCoordinate):
 		if yCoordinate == 7:
@@ -143,45 +143,45 @@ class MoveHandler:
 		SelectedPiece = State().GetChessPieceAtPosition(coordinate)
 		PlayerColor, PieceType = None, None
 		if SelectedPiece != None:
-			PlayerColor = SelectedPiece["PlayerColor"]
-			PieceType = SelectedPiece["PieceType"]
+			PlayerColor = SelectedPiece['PlayerColor']
+			PieceType = SelectedPiece['PieceType']
 
 		if self.GetCurrentMove().GetStartPiece() == None:
 			if PieceType != None and (self.GetMoveIndex() == 0 or self.GetPreviousMove().GetPlayerColor() != PlayerColor):
 				self.GetCurrentMove().SetStartPieceAndPos(PlayerColor, PieceType, coordinate)
-				self.__ChessBoard.remove_highlights()
-				self.__ChessBoard.add_highlight(coordinate)
+				self.__ChessBoard.RemoveHighlights()
+				self.__ChessBoard.AddHighlight(coordinate)
 		else:
 			if PieceType != None and PlayerColor == self.GetCurrentMove().GetPlayerColor():
 				self.GetCurrentMove().SetStartPieceAndPos(PlayerColor, PieceType, coordinate)
-				self.__ChessBoard.remove_highlights()
-				self.__ChessBoard.add_highlight(coordinate)
+				self.__ChessBoard.RemoveHighlights()
+				self.__ChessBoard.AddHighlight(coordinate)
 			else:
 				ChessType = State().GetChessType()
-				if ChessType == "Chess":
+				if ChessType == 'Chess':
 					self.ChessMove(coordinate)
-				elif ChessType == "XiangQi":
+				elif ChessType == 'XiangQi':
 					self.XiangQiMove(coordinate)
 
 
 	def ChessMove(self, coordinate):
 		StartPiece = self.GetCurrentMove().GetStartPiece()
 		if StartPiece == None:
-			print("An error occured when getting StartPiece for CurrentMove in MoveHandler!")
+			print('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
 			exit(1)
 
 		isValidMove = False
-		if StartPiece == "king":
+		if StartPiece == 'king':
 			isValidMove = self.KingMove(coordinate)
-		elif StartPiece == "queen":
+		elif StartPiece == 'queen':
 			isValidMove = self.QueenMove(coordinate)
-		elif StartPiece == "rook":
+		elif StartPiece == 'rook':
 			isValidMove = self.RookMove(coordinate)
-		elif StartPiece == "bishop":
+		elif StartPiece == 'bishop':
 			isValidMove = self.BishopMove(coordinate)
-		elif StartPiece == "knight":
+		elif StartPiece == 'knight':
 			isValidMove = self.KnightMove(coordinate)
-		elif StartPiece == "pawn":
+		elif StartPiece == 'pawn':
 			isValidMove = self.PawnMove(coordinate)
 
 		if isValidMove:
@@ -190,23 +190,23 @@ class MoveHandler:
 	def XiangQiMove(self, coordinate):
 		StartPiece = self.GetCurrentMove().GetStartPiece()
 		if StartPiece == None:
-			print("An error occured when getting StartPiece for CurrentMove in MoveHandler!")
+			print('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
 			exit(1)
 		
 		isValidMove = False
-		if StartPiece == "shuai":
+		if StartPiece == 'shuai':
 			isValidMove = self.ShuaiMove(coordinate)
-		elif StartPiece == "shi":
+		elif StartPiece == 'shi':
 			isValidMove = self.ShiMove(coordinate)
-		elif StartPiece == "xiang":
+		elif StartPiece == 'xiang':
 			isValidMove = self.XiangMove(coordinate)
-		elif StartPiece == "ju":
+		elif StartPiece == 'ju':
 			isValidMove = self.JuMove(coordinate)
-		elif StartPiece == "pao":
+		elif StartPiece == 'pao':
 			isValidMove = self.PaoMove(coordinate)
-		elif StartPiece == "ma":
+		elif StartPiece == 'ma':
 			isValidMove = self.MaMove(coordinate)
-		elif StartPiece == "bing":
+		elif StartPiece == 'bing':
 			isValidMove = self.BingMove(coordinate)
 		
 		if isValidMove:
@@ -219,16 +219,16 @@ class MoveHandler:
 			self.DecrementMoveIndex()
 
 			# Check for castling
-			if move.GetStartPiece() == "king" and abs(move.GetStartPos()[0] - move.GetEndPos()[0]) == 2:
+			if move.GetStartPiece() == 'king' and abs(move.GetStartPos()[0] - move.GetEndPos()[0]) == 2:
 				RookPos = ((move.GetStartPos()[0] + move.GetEndPos()[0]) // 2, move.GetStartPos()[1])
 				self.__ChessBoard.RemovePieceFromBoard(RookPos)
 
 				CastleType = self.GetCastleTypeFromXCoordinate(move.GetEndPos())
-				if CastleType == "Long":
+				if CastleType == 'Long':
 					RookPos = (0, RookPos[1])
 				else:
 					RookPos = (7, RookPos[1])
-				self.__ChessBoard.AddPieceToBoard(move.GetPlayerColor(), "rook", RookPos)
+				self.__ChessBoard.AddPieceToBoard(move.GetPlayerColor(), 'rook', RookPos)
 			
 			# Reverse move
 			self.__ChessBoard.RemovePieceFromBoard(move.GetEndPos())
@@ -236,14 +236,14 @@ class MoveHandler:
 
 			TakenPiece = move.GetTakenPiece()
 			if TakenPiece != None:
-				self.__ChessBoard.AddPieceToBoard(TakenPiece["PlayerColor"], TakenPiece["PieceType"], move.GetTakenPiecePos())
+				self.__ChessBoard.AddPieceToBoard(TakenPiece['PlayerColor'], TakenPiece['PieceType'], move.GetTakenPiecePos())
 			
 			for CastleType in move.GetDisabledCastleTypes():
 				self.SetCastlingStatus(move.GetPlayerColor(), CastleType, True)
 			
-			self.__ChessBoard.remove_highlights()
-			self.__ChessBoard.add_highlight(move.GetStartPos())
-			self.__ChessBoard.add_highlight(move.GetEndPos())
+			self.__ChessBoard.RemoveHighlights()
+			self.__ChessBoard.AddHighlight(move.GetStartPos())
+			self.__ChessBoard.AddHighlight(move.GetEndPos())
 
 	def UndoTakeBack(self):
 		index = self.GetMoveIndex()
@@ -251,12 +251,12 @@ class MoveHandler:
 			self.IncrementMoveIndex()
 			move = self.GetMoveFromIndex()
 
-			if move.GetStartPiece() == "king" and abs(move.GetStartPos()[0] - move.GetEndPos()[0]) == 2:
+			if move.GetStartPiece() == 'king' and abs(move.GetStartPos()[0] - move.GetEndPos()[0]) == 2:
 				RookPos = ((move.GetStartPos()[0] + move.GetEndPos()[0]) // 2, move.GetStartPos()[1])
-				self.__ChessBoard.AddPieceToBoard(move.GetPlayerColor(), "rook", RookPos)
+				self.__ChessBoard.AddPieceToBoard(move.GetPlayerColor(), 'rook', RookPos)
 
 				CastleType = self.GetCastleTypeFromXCoordinate(move.GetEndPos())
-				if CastleType == "Long":
+				if CastleType == 'Long':
 					RookPos = (0, RookPos[1])
 				else:
 					RookPos = (7, RookPos[1])
@@ -272,20 +272,20 @@ class MoveHandler:
 			for CastleType in move.GetDisabledCastleTypes():
 				self.SetCastlingStatus(move.GetPlayerCOlor(), CastleType, False)
 			
-			self.__ChessBoard.remove_highlights()
-			self.__ChessBoard.add_highlight(move.GetStartPos())
-			self.__ChessBoard.add_highlight(move.GetEndPos())
+			self.__ChessBoard.RemoveHighlights()
+			self.__ChessBoard.AddHighlight(move.GetStartPos())
+			self.__ChessBoard.AddHighlight(move.GetEndPos())
 
 	def RegisterMove(self):
 		CurrentMove = self.GetCurrentMove()
 		self.__ChessBoard.RemovePieceFromBoard(CurrentMove.GetTakenPiecePos())
 		self.__ChessBoard.RemovePieceFromBoard(CurrentMove.GetStartPos())
 		self.__ChessBoard.AddPieceToBoard(CurrentMove.GetPlayerColor(), CurrentMove.GetEndPiece(), CurrentMove.GetEndPos())
-		self.__ChessBoard.add_highlight(CurrentMove.GetEndPos())
+		self.__ChessBoard.AddHighlight(CurrentMove.GetEndPos())
 
-		self.__data["MoveList"] = self.__data["MoveList"][:self.GetMoveIndex()]
-		self.__data["MoveList"].append(copy.deepcopy(self.GetCurrentMove()))
-		self.__data["CurrentMove"] = Move()
+		self.__data['MoveList'] = self.__data['MoveList'][:self.GetMoveIndex()]
+		self.__data['MoveList'].append(copy.deepcopy(self.GetCurrentMove()))
+		self.__data['CurrentMove'] = Move()
 		self.IncrementMoveIndex()
 
 
@@ -297,8 +297,8 @@ class MoveHandler:
 		if abs(coordinate[0] - CurrentMove.GetStartPos()[0]) <= 1 and abs(coordinate[1] - CurrentMove.GetStartPos()[1]) <= 1:
 			isValidMove = True
 		elif abs(coordinate[0] - CurrentMove.GetStartPos()[0]) == 2 and coordinate[1] == CurrentMove.GetStartPos()[1]:
-			CastleType = {2: "Long", 6: "Short"}
-			RookPos = {"Long": 0, "Short": 7}
+			CastleType = {2: 'Long', 6: 'Short'}
+			RookPos = {'Long': 0, 'Short': 7}
 			if coordinate[0] in CastleType.keys() and self.GetCastlingStatus(PlayerColor, CastleType[coordinate[0]]):
 				isBlocked = False
 				CheckRange = (coordinate[0], RookPos[CastleType[coordinate[0]]])
@@ -311,11 +311,11 @@ class MoveHandler:
 				if not isBlocked:
 					self.__ChessBoard.RemovePieceFromBoard((RookPos[CastleType[coordinate[0]]], coordinate[1]))
 					RookEndCoordinate = ((coordinate[0] + CurrentMove.GetStartPos()[0]) // 2, coordinate[1])
-					self.__ChessBoard.AddPieceToBoard(PlayerColor, "rook", RookEndCoordinate)
+					self.__ChessBoard.AddPieceToBoard(PlayerColor, 'rook', RookEndCoordinate)
 					isValidMove = True
 
 		if isValidMove:
-			for CastleType in ("Long", "Short"):
+			for CastleType in ('Long', 'Short'):
 				self.SetCastlingStatus(PlayerColor, CastleType, False)
 				self.GetCurrentMove().SetDisabledCastleTypes(CastleType)
 			self.GetCurrentMove().SetEndPos(coordinate)
@@ -381,12 +381,12 @@ class MoveHandler:
 
 		if isValidMove:
 			self.GetCurrentMove().SetEndPos(coordinate)
-			if CurrentMove.GetStartPos()[0] == 0 and self.GetCastlingStatus(PlayerColor, "Long"):
-				self.SetCastlingStatus(PlayerColor, "Long", False)
-				self.GetCurrentMove().SetDisabledCastleTypes("Long")
-			elif CurrentMove.GetStartPos()[0] == 7 and self.GetCastlingStatus(PlayerColor, "Short"):
-				self.SetCastlingStatus(PlayerColor, "Short", False)
-				self.GetCurrentMove().SetDisabledCastleTypes("Short")
+			if CurrentMove.GetStartPos()[0] == 0 and self.GetCastlingStatus(PlayerColor, 'Long'):
+				self.SetCastlingStatus(PlayerColor, 'Long', False)
+				self.GetCurrentMove().SetDisabledCastleTypes('Long')
+			elif CurrentMove.GetStartPos()[0] == 7 and self.GetCastlingStatus(PlayerColor, 'Short'):
+				self.SetCastlingStatus(PlayerColor, 'Short', False)
+				self.GetCurrentMove().SetDisabledCastleTypes('Short')
 			return True
 		return False
 
@@ -426,11 +426,11 @@ class MoveHandler:
 		return False
 	
 	def PawnMove(self, coordinate):
-		PieceType = "pawn"
+		PieceType = 'pawn'
 		CurrentMove = self.GetCurrentMove()
 		PlayerColor = CurrentMove.GetPlayerColor()
 		isValidMove = False
-		if PlayerColor == "white":
+		if PlayerColor == 'white':
 			StartingRow = 6
 			MoveDirection = -1
 		else:
@@ -451,11 +451,11 @@ class MoveHandler:
 				isValidMove = True
 			# En passant
 			else:
-				EnPassantEndingRow = {"white": 2, "black": 5}
+				EnPassantEndingRow = {'white': 2, 'black': 5}
 				if coordinate[1] == EnPassantEndingRow[PlayerColor]:
 					EnemyPawnPos = (coordinate[0], CurrentMove.GetStartPos()[1])
 					EnemyPawn = State().GetChessPieceAtPosition(EnemyPawnPos)
-					if EnemyPawn != None and EnemyPawn["PlayerColor"] != PlayerColor and EnemyPawn["PieceType"] == PieceType:
+					if EnemyPawn != None and EnemyPawn['PlayerColor'] != PlayerColor and EnemyPawn['PieceType'] == PieceType:
 						if self.GetMoveIndex() == 0:
 							self.GetCurrentMove().SetTakenPieceAndPos(PieceType, coordinate)
 							isValidMove = True
@@ -469,17 +469,17 @@ class MoveHandler:
 					self.PieceToPromoteTo = None
 
 					self.PromotionWindow = tkinter.Toplevel(root)
-					self.PromotionWindow.title("Promotion")
+					self.PromotionWindow.title('Promotion')
 
 					def callback(ChosenPiece):
 						self.PieceToPromoteTo = ChosenPiece
 						self.PromotionWindow.destroy()
 					
-					for PieceType in Parameters().GetTypesOfChessPieces("Chess"):
-						if PieceType != "king" and PieceType != "pawn":
-							ImgName = color + "_" + PieceType
-							ButtonSize = Parameters().GetCellSize("Chess")
-							img = ImgProcessor().GetPhotoImage("Chess", ImgName)
+					for PieceType in Parameters().GetTypesOfChessPieces('Chess'):
+						if PieceType != 'king' and PieceType != 'pawn':
+							ImgName = color + '_' + PieceType
+							ButtonSize = Parameters().GetCellSize('Chess')
+							img = ImgProcessor().GetPhotoImage('Chess', ImgName)
 							bt = tkinter.Button(self.PromotionWindow, image = img, command = lambda s = PieceType : callback(s), width = ButtonSize, height = ButtonSize)
 							bt.image = img
 							bt.pack(side = tkinter.LEFT)
@@ -488,12 +488,12 @@ class MoveHandler:
 
 			promotion = PromotionPrompt(Parameters().GetRoot())
 			if promotion.PieceToPromoteTo == None:
-				return "queen"
+				return 'queen'
 			return promotion.PieceToPromoteTo
 
 		if isValidMove:
 			self.GetCurrentMove().SetEndPos(coordinate)
-			PromotionRow = {"white": 0, "black": 7}
+			PromotionRow = {'white': 0, 'black': 7}
 			if coordinate[1] == PromotionRow[PlayerColor]:
 				self.GetCurrentMove().SetEndPiece(PawnPromotion(PlayerColor))
 			return True
@@ -501,7 +501,7 @@ class MoveHandler:
 
 	
 	def ShuaiMove(self, coordinate):
-		ChessType = "XiangQi"
+		ChessType = 'XiangQi'
 		CurrentMove = self.GetCurrentMove()
 		PlayerColor = CurrentMove.GetPlayerColor()
 		isValidMove = False
@@ -510,8 +510,8 @@ class MoveHandler:
 		yCoordinateLim = (0, 2)
 		if PlayerColor == Parameters().GetPlayerColors(ChessType)[0]:
 			yCoordinateLim = (
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[1],
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[0]
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[1],
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[0]
 			)
 		if abs(coordinate[0] - CurrentMove.GetStartPos()[0]) == 1 and coordinate[1] == CurrentMove.GetStartPos()[1] and xCoordinateLim[0] <= coordinate[0] <= xCoordinateLim[1]:
 			isValidMove = True
@@ -519,7 +519,7 @@ class MoveHandler:
 			isValidMove = True
 		else:
 			EnemyKing = State().GetChessPieceAtPosition(coordinate)
-			if EnemyKing != None and EnemyKing["PlayerColor"] != CurrentMove.GetPlayerColor() and EnemyKing["PieceType"] == "shuai":
+			if EnemyKing != None and EnemyKing['PlayerColor'] != CurrentMove.GetPlayerColor() and EnemyKing['PieceType'] == 'shuai':
 				isBlocked = False
 				CheckRange = (coordinate[1], CurrentMove.GetStartPos()[1])
 				CheckRange = (min(CheckRange), max(CheckRange))
@@ -536,7 +536,7 @@ class MoveHandler:
 		return False
 
 	def ShiMove(self, coordinate):
-		ChessType = "XiangQi"
+		ChessType = 'XiangQi'
 		CurrentMove = self.GetCurrentMove()
 		PlayerColor = CurrentMove.GetPlayerColor()
 		isValidMove = False
@@ -545,8 +545,8 @@ class MoveHandler:
 		yCoordinateLim = (0, 2)
 		if PlayerColor == Parameters().GetPlayerColors(ChessType)[0]:
 			yCoordinateLim = (
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[1],
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[0]
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[1],
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[0]
 			)
 		if (abs(coordinate[0] - CurrentMove.GetStartPos()[0]) == 1 and abs(coordinate[1] - CurrentMove.GetStartPos()[1]) == 1 and xCoordinateLim[0] <= coordinate[0] <= xCoordinateLim[1] and yCoordinateLim[0] <= coordinate[1] <= yCoordinateLim[1]):
 			isValidMove = True
@@ -557,7 +557,7 @@ class MoveHandler:
 		return False
 	
 	def XiangMove(self, coordinate):
-		ChessType = "XiangQi"
+		ChessType = 'XiangQi'
 		CurrentMove = self.GetCurrentMove()
 		PlayerColor = CurrentMove.GetPlayerColor()
 		isValidMove = False
@@ -565,8 +565,8 @@ class MoveHandler:
 		yCoordinateLim = (0, 4)
 		if PlayerColor == Parameters().GetPlayerColors(ChessType)[0]:
 			yCoordinateLim = (
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[1],
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[0]
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[1],
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[0]
 			)
 		if (abs(coordinate[0] - CurrentMove.GetStartPos()[0]) == 2 and abs(coordinate[1] - CurrentMove.GetStartPos()[1]) == 2 and yCoordinateLim[0] <= coordinate[1] <= yCoordinateLim[1]):
 			midpoint = ((coordinate[0] + CurrentMove.GetStartPos()[0]) // 2,
@@ -668,7 +668,7 @@ class MoveHandler:
 		return False
 
 	def BingMove(self, coordinate):
-		ChessType = "XiangQi"
+		ChessType = 'XiangQi'
 		CurrentMove = self.GetCurrentMove()
 		PlayerColor = CurrentMove.GetPlayerColor()
 		isValidMove = False
@@ -677,8 +677,8 @@ class MoveHandler:
 		direction = 1
 		if PlayerColor == Parameters().GetPlayerColors(ChessType)[0]:
 			yCoordinateLim = (
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[1],
-				Parameters().GetChessboardYArray(ChessType)-1 - yCoordinateLim[0]
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[1],
+				Parameters().GetChessBoardYArray(ChessType)-1 - yCoordinateLim[0]
 			)
 			direction = -1
 
