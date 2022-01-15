@@ -1,3 +1,5 @@
+import logging
+
 from settings import Parameters, State
 from ImgProcessor import *
 from moves import MoveHandler
@@ -52,7 +54,7 @@ class ChessBoard:
 		elif State().GetChessType() == 'XiangQi':
 			self.DrawXiangQiBoard()
 		else:
-			print('Wrong "ChessType" when calling ResizeCanvas!')
+			logging.error('Wrong "ChessType" when calling ResizeCanvas!')
 			exit(1)
 		
 		# Add pieces to board

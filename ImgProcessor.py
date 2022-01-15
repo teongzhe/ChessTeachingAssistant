@@ -11,7 +11,7 @@ class ImgProcessor:
 	__img = None
 	def __new__(self):
 		if not self.__instance:
-			logging.info('[ImgProcessor] Initializing singleton')
+			logging.info('Initializing singleton')
 			self.__instance = super(ImgProcessor, self).__new__(self)
 			self.__instance.__Initialize()
 		return self.__instance

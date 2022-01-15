@@ -9,7 +9,7 @@ class Parameters():
 	__data = None
 	def __new__(self):
 		if not self.__instance:
-			logging.info('[Parameters] Initializing singleton')
+			logging.info('Initializing singleton')
 			self.__instance = super(Parameters, self).__new__(self)
 			self.__instance.__initialize()
 		return self.__instance

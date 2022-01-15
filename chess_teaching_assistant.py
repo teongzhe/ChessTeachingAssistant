@@ -46,19 +46,21 @@ class MainWindow:
 	def InitActionPanel(self):
 		self.actionPanel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard, self.CaptionPanel)
 
-
-if __name__ == '__main__':
+def SetupLogging():
 	logDirName = 'log'
 	if not os.path.exists(logDirName):
 		os.makedirs(logDirName)
 	logging.basicConfig(
 		filename=logDirName + os.path.sep + date.today().strftime('%Y%m%d') + '.log',
 		encoding='utf-8',
-		format='%(asctime)s %(levelname)-8s %(message)s',
-		# level=logging.DEBUG,
+		format='%(asctime)s %(levelname)-8s %(module)-30s: %(message)s',
 		level = logging.INFO,
 		datefmt='%Y-%m-%d %H:%M:%S',
 	)
+
+
+if __name__ == '__main__':
+	SetupLogging()
 	logging.info('Program has started')
 
 	Parameters()

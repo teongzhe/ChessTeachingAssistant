@@ -67,13 +67,13 @@ class MoveHandler:
 	__data = None
 	def __new__(self, chessboard = None):
 		if not self.__instance:
-			logging.info('[MoveHandler] Initializing singleton')
+			logging.info('Initializing singleton')
 			if chessboard != None:
 				self.__instance = super(MoveHandler, self).__new__(self)
 				self.__ChessBoard = chessboard
 				self.__instance.ClearMoveList()
 			else:
-				print('Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!')
+				logging.error('Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!')
 				exit(1)
 		return self.__instance
 
@@ -168,7 +168,7 @@ class MoveHandler:
 	def ChessMove(self, coordinate):
 		StartPiece = self.GetCurrentMove().GetStartPiece()
 		if StartPiece == None:
-			print('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
+			logging.error('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
 			exit(1)
 
 		isValidMove = False
@@ -191,7 +191,7 @@ class MoveHandler:
 	def XiangQiMove(self, coordinate):
 		StartPiece = self.GetCurrentMove().GetStartPiece()
 		if StartPiece == None:
-			print('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
+			logging.error('An error occured when getting StartPiece for CurrentMove in MoveHandler!')
 			exit(1)
 		
 		isValidMove = False
