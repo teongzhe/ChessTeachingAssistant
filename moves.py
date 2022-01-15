@@ -71,20 +71,11 @@ class MoveHandler:
 			if chessboard != None:
 				self.__instance = super(MoveHandler, self).__new__(self)
 				self.__ChessBoard = chessboard
-				self.__instance.__initialize()
+				self.__instance.ClearMoveList()
 			else:
 				print('Failed to initialize MoveHandler, please initiate chessboard first and pass as argument!')
 				exit(1)
 		return self.__instance
-
-	def __initialize(self):
-		self.__data = {
-			'Castling'		: dict(),
-			'MoveList'		: list(),
-			'MoveIndex'		: 0,
-			'CurrentMove'	: Move(),
-		}
-		self.ResetCastlingStatus()
 
 
 	def ResetCastlingStatus(self):
@@ -117,6 +108,14 @@ class MoveHandler:
 		return self.__data['CurrentMove']
 	def GetMoveListLength(self):
 		return len(self.__data['MoveList'])
+	def ClearMoveList(self):
+		self.__data = {
+			'Castling'		: dict(),
+			'MoveList'		: list(),
+			'MoveIndex'		: 0,
+			'CurrentMove'	: Move(),
+		}
+		self.ResetCastlingStatus()
 
 	def IncrementMoveIndex(self):
 		self.__data['MoveIndex'] += 1
@@ -467,7 +466,8 @@ class MoveHandler:
 
 		def PawnPromotion(color):
 			class PromotionPrompt:
-				def __init__(self, root):
+				def __init__(self):
+					root = Parameters().GetRoot()
 					self.PieceToPromoteTo = None
 
 					self.PromotionWindow = tkinter.Toplevel(root)
@@ -487,8 +487,7 @@ class MoveHandler:
 							bt.pack(side = tkinter.LEFT)
 
 					root.wait_window(self.PromotionWindow)
-
-			promotion = PromotionPrompt(Parameters().GetRoot())
+			promotion = PromotionPrompt()
 			if promotion.PieceToPromoteTo == None:
 				return 'queen'
 			return promotion.PieceToPromoteTo

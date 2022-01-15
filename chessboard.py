@@ -287,5 +287,5 @@ class ChessBoard:
 				self.AddPieceToBoard('red', 'bing', (i,6))
 				self.AddPieceToBoard('black', 'bin', (i,3))
 		
-		State().ClearMoveList()
+		MoveHandler(self).ClearMoveList()
 		self.RemoveHighlights()
