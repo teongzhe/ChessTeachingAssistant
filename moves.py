@@ -1,5 +1,6 @@
 import tkinter
 import copy
+import logging
 
 from settings import Parameters, State
 from ImgProcessor import *
@@ -66,6 +67,7 @@ class MoveHandler:
 	__data = None
 	def __new__(self, chessboard = None):
 		if not self.__instance:
+			logging.info('[MoveHandler] Initializing singleton')
 			if chessboard != None:
 				self.__instance = super(MoveHandler, self).__new__(self)
 				self.__ChessBoard = chessboard

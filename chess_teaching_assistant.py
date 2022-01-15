@@ -1,7 +1,8 @@
 import tkinter
-import tkinter.font
-from moves import MoveHandler
+import logging, os
+from datetime import date
 
+from moves import MoveHandler
 from settings import Parameters, State
 from ImgProcessor import *
 import action_panel, chessboard, chesspieces
@@ -48,7 +49,19 @@ class MainWindow:
 
 
 if __name__ == '__main__':
-	# Initialize Singletons
+	logDirName = 'log'
+	if not os.path.exists(logDirName):
+		os.makedirs(logDirName)
+	logging.basicConfig(
+		filename=logDirName + os.path.sep + date.today().strftime('%Y%m%d') + '.log',
+		encoding='utf-8',
+		format='%(asctime)s %(levelname)-8s %(message)s',
+		# level=logging.DEBUG,
+		level = logging.INFO,
+		datefmt='%Y-%m-%d %H:%M:%S',
+	)
+	logging.info('Program has started')
+
 	Parameters()
 	State()
 	ImgProcessor()

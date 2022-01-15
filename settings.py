@@ -1,4 +1,5 @@
 import copy
+import logging
 
 import moves
 
@@ -8,6 +9,7 @@ class Parameters():
 	__data = None
 	def __new__(self):
 		if not self.__instance:
+			logging.info('[Parameters] Initializing singleton')
 			self.__instance = super(Parameters, self).__new__(self)
 			self.__instance.__initialize()
 		return self.__instance
@@ -145,6 +147,7 @@ class State:
 	__data = None
 	def __new__(self):
 		if not self.__instance:
+			logging.info('[State] Initializing singleton')
 			self.__instance = super(State, self).__new__(self)
 			self.__instance.__initialize()
 		return self.__instance

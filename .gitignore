@@ -1,6 +1,7 @@
 *__pycache__*
 *build*
 *dist*
+*log*
 *.exe
 *.spec
 chess_teaching_assistant.zip
