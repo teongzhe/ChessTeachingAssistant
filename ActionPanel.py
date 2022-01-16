@@ -34,7 +34,7 @@ class ActionPanel:
 		State().SetChessType(target_type)
 		self.ChessBoard.ClearPiecesFromBoard()
 		self.ChessBoard.InitChessBoard()
-		self.chesspieces.initialize_menu()
+		self.chesspieces.InitializeMenu()
 
 		State().ClearMoveList()
 		self.ChessBoard.RemoveHighlights()

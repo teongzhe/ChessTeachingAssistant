@@ -5,7 +5,7 @@ from datetime import date
 from moves import MoveHandler
 from settings import Parameters, State
 from ImgProcessor import *
-import action_panel, chessboard, chesspieces
+import ActionPanel, chessboard, chesspieces
 
 
 class MainWindow:
@@ -41,7 +41,7 @@ class MainWindow:
 		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard, 0.1 * self.root.winfo_screenheight())
 
 	def InitActionPanel(self):
-		self.actionPanel = action_panel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard, self.CaptionPanel)
+		self.actionPanel = ActionPanel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard, self.CaptionPanel)
 
 	def ResizeWindow(self):
 		self.root.update()
