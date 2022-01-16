@@ -81,6 +81,8 @@ class MoveHandler:
 	def ResetCastlingStatus(self):
 		for color, KingYCoordinate in {'white': 7, 'black': 0}.items():
 			KingPiece = State().GetChessPieceAtPosition((4, KingYCoordinate))
+			if KingPiece is None:
+				break
 			if KingPiece['PlayerColor'] == color and KingPiece['PieceType'] == 'king':
 				for CastleType, RookXCoordinate in {'Long': 0, 'Short': 7}.items():
 					RookPiece = State().GetChessPieceAtPosition((RookXCoordinate, KingYCoordinate))

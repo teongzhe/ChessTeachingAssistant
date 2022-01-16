@@ -287,7 +287,7 @@ class ChessBoard:
 				self.AddPieceToBoard('black', 'pao', (i,2))
 			for i in range(0,9,2):
 				self.AddPieceToBoard('red', 'bing', (i,6))
-				self.AddPieceToBoard('black', 'bin', (i,3))
+				self.AddPieceToBoard('black', 'bing', (i,3))
 		
 		MoveHandler(self).ClearMoveList()
 		self.RemoveHighlights()
