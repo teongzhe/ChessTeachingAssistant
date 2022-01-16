@@ -14,13 +14,13 @@ Functions that are currently implemented include:
 Follow the instructions below to get started!
 1. Download the zip package from https://drive.google.com/uc?id=1gI1Pe5u1tDIbaU6Vg2gpoLkuFNjr16UZ&export=download
 2. Unzip the package to a location of your choice
-3. Check that the contents include `chess_teaching_assistant.exe` and a folder named `img` (don't delete this folder!)
-3. Run `chess_teaching_assistant.exe`
+3. Check that the contents include `ChessTeachingAssistant.exe` and a folder named `img` (don't delete this folder!)
+3. Run `ChessTeachingAssistant.exe`
 4. Start teaching!
 
 Well.... That's it if you didn't run into any problems.  
-The uploaded `chess_teaching_assistant.exe` only works on computers with similar operating systems to the computer on which it was built on.
-If you encounter problems when running `chess_teaching_assistant.exe`, do read on, and maybe get your IT consultant to help you out if you're feeling lost!
+The uploaded `ChessTeachingAssistant.exe` only works on computers with similar operating systems to the computer on which it was built on.
+If you encounter problems when running `ChessTeachingAssistant.exe`, do read on, and maybe get your IT consultant to help you out if you're feeling lost!
 
 
 
@@ -47,25 +47,25 @@ If you don't think you're tech savvy I definitely recommend *not* downloading th
 ### Method 1: Download the package and unzip
 1. Download the zip package from https://github.com/teongzhe/ChessTeachingAssistant by clicking on the `Code` button and selecting `Download ZIP`
 2. Unzip to the location of your choice (don't overwrite your old directory just yet!)
-3. Open command prompt and `cd` to the newly downloaded directory with `chess_teaching_assistant.py` (this is the file we will be building in the next step)
-4. `python chess_teaching_assistant.py`
+3. Open command prompt and `cd` to the newly downloaded directory with `Main.py` (this is the file we will be building in the next step)
+4. `python Main.py`
 5. The application should launch, if not, do drop me an email at teongzhechua@gmail.com
 
 ### Method 2: Update using git
-1. Open command prompt and `cd` to your `chess_teaching_assistant` directory.
+1. Open command prompt and `cd` to your `ChessTeachingAssistant` directory.
 2. `git checkout master`
 3. `git pull`
-4. `python chess_teaching_assistant.py`
+4. `python Main.py`
 5. The application should launch, if not, do drop me an email at teongzhechua@gmail.com
 
 
 
 ## 3. Building the application (optional)
-This is only if you want to build and share `chess_teaching_assistant.exe` to others to save them the trouble you have had to go through. It is a good deed indeed.
+This is only if you want to build and share `ChessTeachingAssistant.exe` to others to save them the trouble you have had to go through. It is a good deed indeed.
 1. Download `pyinstaller` by running `pip install pyinstaller` in your command prompt. You only have to do this the first time, subsequent buildings do not require this step!
-2. Open command prompt and `cd` to your `chess_teaching_assistant` directory (try to make sure that you have the latest version)
-3. `pyinstaller --onefile -w chess_teaching_assistant.py`
-4. Copy `dist\chess_teaching_assistant.exe` to the main directory, i.e. directly under the `chess_teaching_assistant` folder
+2. Open command prompt and `cd` to your `ChessTeachingAssistant` directory (try to make sure that you have the latest version)
+3. `pyinstaller --onefile -w Main.py -n ChessTeachingAssistant`
+4. Copy `dist\ChessTeachingAssistant.exe` to the main directory, i.e. directly under the `ChessTeachingAssistant` folder
 
 
 
