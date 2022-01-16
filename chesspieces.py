@@ -6,7 +6,7 @@ from ImgProcessor import *
 
 
 class ChessPieces:
-	def __init__(self, frame, chessboard, imageSize = 70):
+	def __init__(self, frame, chessboard, imageSize = 50):
 		self.frame = frame
 		self.ChessBoard = chessboard
 		self.__radiobtnSize = imageSize

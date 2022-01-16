@@ -42,6 +42,8 @@ class ChessBoard:
 		# Recalculate parameters
 		Parameters().CalculateDimensionParam(canvasSize)
 		self.canvas.config(width = canvasSize, height = canvasSize)
+		for ChessType in Parameters().GetTypesOfChess():
+			ImgProcessor().ResizeChessPieceImages(ChessType)
 
 		# Clear all objects
 		self.ClearPiecesFromBoard()
