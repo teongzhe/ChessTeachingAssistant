@@ -1,7 +1,7 @@
 import copy
 import logging
 
-import moves
+import Moves
 
 
 class Parameters():
@@ -167,7 +167,7 @@ class State:
 		self.__data['ActiveSquare'] = 0
 		self.__data['MoveList'] = list()
 		self.__data['PreviousPlayer'] = ''
-		self.__data['CurrentMove'] = moves.Move()
+		self.__data['CurrentMove'] = Moves.Move()
 		self.__data['CurrentMoveIndex'] = -1
 	
 
@@ -233,4 +233,4 @@ class State:
 			self.__data['MoveList'] = self.__data['MoveList'][:self.__data['CurrentMoveIndex']]
 		self.__data['MoveList'].append(CurrentMove)
 		self.__data['PreviousPlayer'] = CurrentMove.player_color
-		self.__data['CurrentMove'] = moves.Moves()
+		self.__data['CurrentMove'] = Moves.Moves()

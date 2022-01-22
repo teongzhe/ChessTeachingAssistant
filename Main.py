@@ -2,10 +2,10 @@ import tkinter
 import logging, os
 from datetime import date
 
-from moves import MoveHandler
-from settings import Parameters, State
+from Moves import MoveHandler
+from Settings import Parameters, State
 from ImgProcessor import *
-import ActionPanel, chessboard, chesspieces
+import ActionPanel, ChessBoard, ChessPieces
 
 
 class MainWindow:
@@ -35,10 +35,10 @@ class MainWindow:
 		self.CaptionPanel.bind('<Return>', lambda event: self.root.focus_set())
 
 	def InitChessBoard(self):
-		self.chessboard = chessboard.ChessBoard(tkinter.Canvas(root, bg='white', highlightthickness=0))
+		self.chessboard = ChessBoard.ChessBoard(tkinter.Canvas(root, bg='white', highlightthickness=0))
 
 	def InitChessPiecesMenu(self):
-		self.chesspiecesMenu = chesspieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard, 0.1 * self.root.winfo_screenheight())
+		self.chesspiecesMenu = ChessPieces.ChessPieces(tkinter.Frame(root, borderwidth=5), self.chessboard, 0.1 * self.root.winfo_screenheight())
 
 	def InitActionPanel(self):
 		self.actionPanel = ActionPanel.ActionPanel(tkinter.Frame(root, borderwidth=5), self.chesspiecesMenu, self.chessboard, self.CaptionPanel)

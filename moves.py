@@ -2,7 +2,7 @@ import tkinter
 import copy
 import logging
 
-from settings import Parameters, State
+from Settings import Parameters, State
 from ImgProcessor import *
 
 

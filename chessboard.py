@@ -1,8 +1,8 @@
 import logging
 
-from settings import Parameters, State
+from Settings import Parameters, State
 from ImgProcessor import *
-from moves import MoveHandler
+from Moves import MoveHandler
 
 
 class ChessBoard:

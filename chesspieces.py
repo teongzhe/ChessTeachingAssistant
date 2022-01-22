@@ -1,7 +1,7 @@
 import tkinter
 from PIL import ImageTk
 
-from settings import Parameters, State
+from Settings import Parameters, State
 from ImgProcessor import *
 
 

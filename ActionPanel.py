@@ -1,8 +1,8 @@
 import tkinter
 from tkinter import filedialog, messagebox
 
-from settings import Parameters, State
-from moves import MoveHandler
+from Settings import Parameters, State
+from Moves import MoveHandler
 
 
 class ActionPanel:
