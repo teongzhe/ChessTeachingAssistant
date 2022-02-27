@@ -12,7 +12,7 @@ Functions that are currently implemented include:
 
 # Getting started
 Follow the instructions below to get started!
-1. Download the zip package from https://drive.google.com/uc?id=1gI1Pe5u1tDIbaU6Vg2gpoLkuFNjr16UZ&export=download
+1. Download the zip package from https://drive.google.com/open?id=1gI1Pe5u1tDIbaU6Vg2gpoLkuFNjr16UZ&authuser=teongzhechua%40gmail.com&usp=drive_fs
 2. Unzip the package to a location of your choice
 3. Check that the contents include `ChessTeachingAssistant.exe` and a folder named `img` (don't delete this folder!)
 3. Run `ChessTeachingAssistant.exe`
