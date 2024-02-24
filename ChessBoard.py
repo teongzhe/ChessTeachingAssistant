@@ -115,11 +115,18 @@ class ChessBoard:
 		# Insert alphabets and numbers for notation
 		alphabets = ('a','b','c','d','e','f','g','h')
 		for i in range(Parameters().GetChessBoardXArray(ChessType)):
-			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin + BoardSize + TextMargin, text=alphabets[i], font=12))
-			self.chessboardObjects.append(self.canvas.create_text(BoardMargin - TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=i+1, font=12))
+			if State().IsRotated():
+				alphabet = alphabets[Parameters().GetChessBoardXArray(ChessType)-i-1]
+				number = Parameters().GetChessBoardXArray(ChessType)-i
+			else:
+				alphabet = alphabets[i]
+				number = i+1
 
-			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin - TextMargin, text=alphabets[i], font=12, angle=180))
-			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + BoardSize + TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=i+1, font=12, angle=180))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin + BoardSize + TextMargin, text=alphabet, font=12))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin - TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=number, font=12))
+
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + (i+0.5)*CellSize, BoardMargin - TextMargin, text=alphabet, font=12, angle=180))
+			self.chessboardObjects.append(self.canvas.create_text(BoardMargin + BoardSize + TextMargin, BoardMargin + BoardSize - (i+0.5)*CellSize, text=number, font=12, angle=180))
 
 	def DrawXiangQiBoard(self):
 		ChessType = 'XiangQi'
@@ -234,10 +241,19 @@ class ChessBoard:
 				y = Parameters().GetChessBoardYArray(ChessType) - 1
 			
 			coordinate = (x,y)
+			coordinate = self.GetRotatedCoordinateOnBoard(coordinate)
 			if State().IsGameOngoing():
 				MoveHandler().Process(coordinate)
 			else:
 				self.ChangePieceOnBoard(coordinate)
+
+
+	def GetRotatedCoordinateOnBoard(self, coordinate):
+		if State().IsRotated():
+			ChessType = State().GetChessType()
+			coordinate = (	Parameters().GetChessBoardXArray(ChessType) - coordinate[0] - 1,
+							Parameters().GetChessBoardYArray(ChessType) - coordinate[1] - 1)
+		return coordinate
 
 
 	def ChangePieceOnBoard(self, coordinate):
@@ -257,7 +273,7 @@ class ChessBoard:
 		State().AddChessPieceToPosition(PlayerColor, PieceType, coordinate)
 		ChessType = State().GetChessType()
 		img = ImgProcessor().GetPhotoImage(ChessType, PlayerColor + '_' + PieceType)
-		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, coordinate), image=img), img]
+		self.chesspiecesObjects[coordinate] = [self.canvas.create_image(Parameters().GetCellCenter(ChessType, self.GetRotatedCoordinateOnBoard(coordinate)), image=img), img]
 
 	def ClearPiecesFromBoard(self):
 		for coordinate in State().GetChessPiecePositions():

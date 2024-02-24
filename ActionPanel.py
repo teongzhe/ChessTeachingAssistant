@@ -32,7 +32,7 @@ class ActionPanel:
 	
 	def ChangeChessType(self, target_type):
 		State().SetChessType(target_type)
-		self.ChessBoard.ClearPiecesFromBoard()
+		State().SetRotated(False)
 		self.ChessBoard.InitChessBoard()
 		self.chesspieces.InitializeMenu()
 
@@ -60,6 +60,7 @@ class ActionPanel:
 		tkinter.Button(main_frame, text='Quick save', command=quicksave, width=BUTTON_WIDTH).pack(anchor='w')
 
 		def quickload():
+			State().SetRotated(False)
 			self.ChessBoard.ClearPiecesFromBoard()
 			for coordinate, piece in State().GetQuickSavePosition().items():
 				self.ChessBoard.AddPieceToBoard(piece['PlayerColor'], piece['PieceType'], coordinate)
@@ -117,6 +118,7 @@ class ActionPanel:
 					self.ChangeChessType(ChessType)
 				
 				# Update chess pieces
+				State().SetRotated(False)
 				self.ChessBoard.ClearPiecesFromBoard()
 				for coordinate, piece in data.items():
 					if 0 <= coordinate[0] < Parameters().GetChessBoardXArray(ChessType) and 0 <= coordinate[1] < Parameters().GetChessBoardYArray(ChessType):
@@ -128,3 +130,9 @@ class ActionPanel:
 				self.ChessBoard.RemoveHighlights()
 
 		tkinter.Button(main_frame, text='Load from file', command=LoadFromFile, width=BUTTON_WIDTH).pack(anchor='w')
+
+		# Rotate board
+		def RotateBoard():
+			State().InvertRotated()
+			self.ChessBoard.InitChessBoard()
+		tkinter.Button(main_frame, text='Rotate board', command=RotateBoard, width=BUTTON_WIDTH).pack(anchor='w')

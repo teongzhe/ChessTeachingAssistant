@@ -160,6 +160,7 @@ class State:
 			'SavedCaption'				: '',
 			'Position'					: dict(),
 			'QuickSavePosition'			: dict(),
+			'IsRotated'					: False,
 		}
 		self.ClearMoveList()
 
@@ -194,6 +195,13 @@ class State:
 		self.__data['QuickSavePosition'] = copy.deepcopy(self.__data['Position'])
 	def GetQuickSavePosition(self):
 		return self.__data['QuickSavePosition']
+
+	def SetRotated(self, isRotated = True):
+		self.__data['IsRotated'] = isRotated
+	def InvertRotated(self):
+		self.__data['IsRotated'] = not self.__data['IsRotated']
+	def IsRotated(self):
+		return self.__data['IsRotated']
 
 	def GetActiveSquare(self):
 		return self.__data['ActiveSquare']
